@@ -1,10 +1,9 @@
 // =========================
 // YRMS v0.1
+// script.js
 // =========================
 
 // Temporary doctor information
-// Later this data will come from Google Sheets
-
 const doctor = {
     name: "جاري تحميل البيانات...",
     clinic: "..."
@@ -13,7 +12,6 @@ const doctor = {
 // Display doctor information
 document.getElementById("doctorName").textContent = doctor.name;
 document.getElementById("clinicName").textContent = doctor.clinic;
-
 
 // =========================
 // X-Ray Types
@@ -33,37 +31,33 @@ const xrayTypes = [
 
 const container = document.getElementById("xrayContainer");
 
-xrayTypes.forEach(type => {
+xrayTypes.forEach(function(type) {
 
-    container.innerHTML += 
+    const html = 
         <div class="form-check xray-item">
-
             <input
                 class="form-check-input"
                 type="checkbox"
                 id="${type}"
                 value="${type}">
-
             <label
                 class="form-check-label"
                 for="${type}">
                 ${type}
             </label>
-
         </div>
     ;
 
-});
+    container.insertAdjacentHTML("beforeend", html);
 
+});
 
 // =========================
 // Submit Button
 // =========================
 
-document
-    .getElementById("submitBtn")
-    .addEventListener("click", function () {
+document.getElementById("submitBtn").addEventListener("click", function () {
 
-        alert("هذه النسخة التجريبية فقط.");
+    alert("هذه النسخة التجريبية فقط.");
 
-    });
+});
