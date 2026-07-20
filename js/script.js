@@ -10,11 +10,14 @@ const doctor = {
     clinic: "..."
 };
 
+// Display doctor information
 document.getElementById("doctorName").textContent = doctor.name;
 document.getElementById("clinicName").textContent = doctor.clinic;
 
 
+// =========================
 // X-Ray Types
+// =========================
 
 const xrayTypes = [
     "CBCT Tooth",
@@ -38,15 +41,13 @@ xrayTypes.forEach(type => {
             <input
                 class="form-check-input"
                 type="checkbox"
-                value="${type}"
-                id="${type}">
+                id="${type}"
+                value="${type}">
 
             <label
                 class="form-check-label"
                 for="${type}">
-
                 ${type}
-
             </label>
 
         </div>
@@ -55,12 +56,14 @@ xrayTypes.forEach(type => {
 });
 
 
+// =========================
 // Submit Button
+// =========================
 
 document
-.getElementById("submitBtn")
-.addEventListener("click", function(){
+    .getElementById("submitBtn")
+    .addEventListener("click", function () {
 
-    alert("هذه النسخة التجريبية فقط.");
+        alert("هذه النسخة التجريبية فقط.");
 
-});
+    });
