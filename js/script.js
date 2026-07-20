@@ -32,24 +32,25 @@ const xrayTypes = [
 const container = document.getElementById("xrayContainer");
 
 xrayTypes.forEach(function(type) {
+    // إنشاء id آمن بدون مسافات (مثال: "CBCT-Tooth")
+    const safeId = type.replace(/\s+/g, '-');
 
     const html = 
         <div class="form-check xray-item">
             <input
                 class="form-check-input"
                 type="checkbox"
-                id="${type}"
+                id="${safeId}"
                 value="${type}">
             <label
                 class="form-check-label"
-                for="${type}">
+                for="${safeId}">
                 ${type}
             </label>
         </div>
     ;
 
     container.insertAdjacentHTML("beforeend", html);
-
 });
 
 // =========================
@@ -57,7 +58,5 @@ xrayTypes.forEach(function(type) {
 // =========================
 
 document.getElementById("submitBtn").addEventListener("click", function () {
-
     alert("هذه النسخة التجريبية فقط.");
-
 });
