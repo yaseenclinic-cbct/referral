@@ -1,1 +1,0 @@
-document.getElementById('doctorName').textContent='جاري تحميل بيانات الطبيب...';document.getElementById('clinicName').textContent='...';
