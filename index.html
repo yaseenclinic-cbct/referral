@@ -1,1 +1,299 @@
-<!doctype html><html lang='ar' dir='rtl'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css' rel='stylesheet'><link href='css/style.css' rel='stylesheet'><title>Yaseen Referral System</title></head><body><div class='container py-4'><h2>Yaseen Referral System</h2><div class='card p-3 my-3'><h5 id='doctorName'>اسم الطبيب</h5><p id='clinicName'>اسم العيادة</p></div><div class='card p-3'><div class='form-check'><input class='form-check-input' type='checkbox'><label class='form-check-label'>CBCT Tooth</label></div><div class='form-check'><input class='form-check-input' type='checkbox'><label>OPG</label></div><button id='submitBtn' class='btn btn-warning mt-3'>إرسال الطلب</button></div></div><script src='js/script.js'></script></body></html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Yaseen Referral System</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="container py-4">
+
+    <!-- Header -->
+
+    <header class="text-center mb-4">
+
+        <img
+            src="assets/logo/logo.png"
+            class="logo"
+            alt="Yaseen Logo">
+
+        <h1 class="system-title">
+
+            Yaseen Referral System
+
+        </h1>
+
+        <p class="system-subtitle">
+
+            نظام إحالة المرضى
+
+        </p>
+
+    </header>
+
+    <!-- Doctor Card -->
+
+    <section class="card card-custom mb-4">
+
+        <div class="card-body">
+
+            <span class="section-label">
+
+                الطبيب المحول
+
+            </span>
+
+            <h3 id="doctorName">
+
+                جاري تحميل البيانات...
+
+            </h3>
+
+            <p id="clinicName">
+
+                ...
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- Patient Information -->
+
+    <section class="card card-custom mb-4">
+
+        <div class="card-body">
+
+            <h4 class="section-title">
+
+                بيانات المراجع
+
+            </h4>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    الاسم الثلاثي *
+
+                </label>
+
+                <input
+                    id="patientName"
+                    type="text"
+                    class="form-control">
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-6">
+
+                    <label class="form-label">
+
+                        العمر
+
+                    </label>
+
+                    <input
+                        id="patientAge"
+                        type="number"
+                        class="form-control">
+
+                </div>
+
+                <div class="col-6">
+
+                    <label class="form-label">
+
+                        رقم الهاتف *
+
+                    </label>
+
+                    <input
+                        id="patientPhone"
+                        type="tel"
+                        class="form-control">
+
+                </div>
+
+            </div>
+
+            <div class="mt-4">
+
+                <label class="form-label">
+
+                    الجنس
+
+                </label>
+
+                <div class="gender-box">
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="gender"
+                            value="ذكر">
+
+                        ذكر
+
+                    </label>
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="gender"
+                            value="أنثى">
+
+                        أنثى
+
+                    </label>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- X-Ray Types -->
+
+    <section class="card card-custom mb-4">
+
+        <div class="card-body">
+
+            <h4 class="section-title">
+
+                أنواع الأشعة
+
+            </h4>
+
+            <div class="row">
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="CBCT Tooth">
+                        <span class="form-check-label">CBCT Tooth</span>
+                    </label>
+                </div>
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="CBCT Jaw">
+                        <span class="form-check-label">CBCT Jaw</span>
+                    </label>
+                </div>
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="CBCT Full Mouth">
+                        <span class="form-check-label">CBCT Full Mouth</span>
+                    </label>
+                </div>
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="OPG">
+                        <span class="form-check-label">OPG</span>
+                    </label>
+                </div>
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Cephalometric">
+                        <span class="form-check-label">Cephalometric</span>
+                    </label>
+                </div>
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="3D Proface">
+                        <span class="form-check-label">3D Proface</span>
+                    </label>
+                </div>
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Surgical Guide">
+                        <span class="form-check-label">Surgical Guide</span>
+                    </label>
+                </div>
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Report">
+                        <span class="form-check-label">Report</span>
+                    </label>
+                </div>
+
+                <div class="col-6 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Ceph Analysis">
+                        <span class="form-check-label">Ceph Analysis</span>
+                    </label>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Notes -->
+
+    <section class="card card-custom mb-4">
+
+        <div class="card-body">
+
+            <h4 class="section-title">
+
+                ملاحظات
+
+            </h4>
+
+            <textarea
+                id="notes"
+                rows="5"
+                class="form-control"></textarea>
+
+        </div>
+
+    </section>
+
+    <div class="d-grid">
+
+        <button
+            id="submitBtn"
+            class="btn btn-warning btn-lg">
+
+            إرسال الإحالة
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>
