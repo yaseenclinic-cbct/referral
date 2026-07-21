@@ -1,0 +1,1 @@
+doctorName.textContent='جاري تحميل بيانات الطبيب...';clinicName.textContent='جاري تحميل اسم العيادة...';submitBtn.onclick=()=>alert('قريباً');
