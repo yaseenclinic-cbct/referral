@@ -4,7 +4,9 @@ import {
     collection,
     getDocs,
     doc,
-    setDoc
+    setDoc,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 async function loadDashboard() {
@@ -69,5 +71,31 @@ document
     alert("تمت إضافة العيادة بنجاح");
 
     loadDashboard();
+
+});
+const doctorModal =
+new bootstrap.Modal(document.getElementById("doctorModal"));
+
+document.getElementById("addDoctorBtn").addEventListener("click", async () => {
+
+    const select = document.getElementById("doctorClinic");
+
+    select.innerHTML = "";
+
+    const clinics = await getDocs(collection(db, "clinics"));
+
+    clinics.forEach((clinic) => {
+
+        const data = clinic.data();
+
+        select.innerHTML += 
+            <option value="${data.code}">
+                ${data.name}
+            </option>
+        ;
+
+    });
+
+    doctorModal.show();
 
 });
