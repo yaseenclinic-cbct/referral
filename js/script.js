@@ -1,6 +1,9 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwl_YFz58K6Cu1238_fbS4UoQkp5JIhpq9x7lLhWw0jdibnjf-obpgb-V9MPtuK7fg/exec";
+import { db } from "./firebase.js";
+import {
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-// بيانات مؤقتة (إلى أن نربط جدول Doctors)
 const doctor = {
     id: "FDC001",
     name: "د. عامر",
@@ -18,45 +21,34 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
         xrays.push(c.value);
     });
 
-    const data = {
-        doctorID: doctor.id,
-        doctorName: doctor.name,
-        clinicName: doctor.clinic,
-        patientName: document.getElementById("patientName").value,
-        age: document.getElementById("patientAge").value,
-        gender: document.querySelector("input[name='gender']:checked")?.value || "",
-        phone: document.getElementById("patientPhone").value,
-        xrays: xrays.join(", "),
-        notes: document.getElementById("notes").value
-    };
-
     try {
 
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
+        await addDoc(collection(db, "referrals"), {
+
+            doctorID: doctor.id,
+            doctorName: doctor.name,
+            clinicName: doctor.clinic,
+
+            patientName: document.getElementById("patientName").value,
+            age: document.getElementById("patientAge").value,
+            gender: document.querySelector("input[name='gender']:checked")?.value || "",
+            phone: document.getElementById("patientPhone").value,
+
+            xrays: xrays,
+
+            notes: document.getElementById("notes").value,
+
+            createdAt: new Date()
+
         });
 
-        const result = await response.json();
+        alert("✅ تم إرسال الإحالة");
 
-        if(result.success){
+    } catch (e) {
 
-            alert("✅ تم إرسال الإحالة\n\nرقم الإحالة: " + result.referralID);
+        console.error(e);
 
-        }else{
-
-            alert("حدث خطأ أثناء الإرسال");
-
-        }
-
-    } catch (err){
-
-        alert("فشل الاتصال بالخادم");
-
-        console.error(err);
+        alert("حدث خطأ");
 
     }
 
