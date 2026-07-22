@@ -136,7 +136,61 @@
   </div>
 
 </div>
+<div class="modal fade" id="doctorModal" tabindex="-1">
 
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">إضافة طبيب</h5>
+
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div class="mb-3">
+
+          <label class="form-label">العيادة</label>
+
+          <select id="doctorClinic" class="form-select"></select>
+
+        </div>
+
+        <div class="mb-3">
+
+          <label class="form-label">اسم الطبيب</label>
+
+          <input
+            type="text"
+            id="doctorNameInput"
+            class="form-control"
+            placeholder="Dr. Amer">
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button
+          class="btn btn-warning"
+          id="saveDoctorBtn">
+
+          حفظ
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>    
 
 <script type="module" src="js/admin.js"></script>
