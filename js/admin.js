@@ -4,10 +4,12 @@ import {
     collection,
     getDocs,
     doc,
-    setDoc,
-    query,
-    where
+    setDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+// ======================
+// Dashboard
+// ======================
 
 async function loadDashboard() {
 
@@ -22,6 +24,11 @@ async function loadDashboard() {
 }
 
 loadDashboard();
+
+
+// ======================
+// Clinic Modal
+// ======================
 
 const clinicModal =
 new bootstrap.Modal(document.getElementById("clinicModal"));
@@ -52,7 +59,6 @@ document
     if (!code || !name) {
 
         alert("املأ جميع الحقول");
-
         return;
 
     }
@@ -73,16 +79,26 @@ document
     loadDashboard();
 
 });
+
+
+// ======================
+// Doctor Modal
+// ======================
+
 const doctorModal =
 new bootstrap.Modal(document.getElementById("doctorModal"));
 
-document.getElementById("addDoctorBtn").addEventListener("click", async () => {
+document
+.getElementById("addDoctorBtn")
+.addEventListener("click", async () => {
 
-    const select = document.getElementById("doctorClinic");
+    const select =
+    document.getElementById("doctorClinic");
 
     select.innerHTML = "";
 
-    const clinics = await getDocs(collection(db, "clinics"));
+    const clinics =
+    await getDocs(collection(db, "clinics"));
 
     clinics.forEach((clinic) => {
 
