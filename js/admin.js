@@ -1,5 +1,6 @@
 import { db } from "./firebase.js";
 console.log("admin.js loaded") ;
+console.log(db) ;
 
 import {
     collection,
