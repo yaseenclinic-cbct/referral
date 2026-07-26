@@ -1,22 +1,24 @@
-import { db } from "./firebase.js";
-console.log("admin.js loaded") ;
-console.log(db) ;
-
-import {
-    collection,
-    getDocs
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
 async function loadDashboard() {
 
-    const doctors = await getDocs(collection(db, "doctors"));
-    const clinics = await getDocs(collection(db, "clinics"));
-    const referrals = await getDocs(collection(db, "referrals"));
+    try {
 
-    document.getElementById("doctorCount").textContent = doctors.size;
-    document.getElementById("clinicCount").textContent = clinics.size;
-    document.getElementById("referralCount").textContent = referrals.size;
+        const doctors = await getDocs(collection(db, "doctors"));
+        console.log("Doctors:", doctors.size);
+
+        const clinics = await getDocs(collection(db, "clinics"));
+        console.log("Clinics:", clinics.size);
+
+        const referrals = await getDocs(collection(db, "referrals"));
+        console.log("Referrals:", referrals.size);
+
+        document.getElementById("doctorCount").textContent = doctors.size;
+        document.getElementById("clinicCount").textContent = clinics.size;
+        document.getElementById("referralCount").textContent = referrals.size;
+
+    } catch (e) {
+
+        console.error("Dashboard Error:", e);
+
+    }
 
 }
-
-loadDashboard();
