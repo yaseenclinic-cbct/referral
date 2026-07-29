@@ -3,9 +3,9 @@ import { db } from "./firebase.js";
 import {
     collection,
     getDocs
-}
-  console.log("doctors.js loaded");  
-    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+console.log("doctors.js loaded");
 
 async function loadDoctors() {
 
@@ -13,41 +13,64 @@ async function loadDoctors() {
 
     table.innerHTML = "";
 
-    const snapshot = await getDocs(collection(db, "doctors"));
-    console.log(snapshot.size);
-snapshot.forEach(doc => console.log(doc.data()));
+    try {
 
-    snapshot.forEach((doctor) => {
+        const snapshot = await getDocs(collection(db, "doctors"));
 
-        const data = doctor.data();
+        console.log("Doctors:", snapshot.size);
 
-        const row = document.createElement("tr");
+        snapshot.forEach((doctor) => {
 
-        row.innerHTML = 
-            <td>${data.id}</td>
-            <td>${data.doctorName}</td>
-            <td>${data.clinicName}</td>
-            <td>
-                <button
-                    class="btn btn-sm btn-primary"
-                    onclick="copyLink('${data.id}')">
+            const data = doctor.data();
 
-                    Copy Link
+            const row = document.createElement("tr");
 
-                </button>
-            </td>
-        ;
+            const tdID = document.createElement("td");
+            tdID.textContent = data.id;
 
-        table.appendChild(row);
+            const tdName = document.createElement("td");
+            tdName.textContent = data.doctorName;
 
-    });
+            const tdClinic = document.createElement("td");
+            tdClinic.textContent = data.clinicName;
+
+            const tdButton = document.createElement("td");
+
+            const btn = document.createElement("button");
+
+            btn.className = "btn btn-primary btn-sm";
+
+            btn.textContent = "Copy Link";
+
+            btn.onclick = function () {
+
+                copyLink(data.id);
+
+            };
+
+            tdButton.appendChild(btn);
+
+            row.appendChild(tdID);
+            row.appendChild(tdName);
+            row.appendChild(tdClinic);
+            row.appendChild(tdButton);
+
+            table.appendChild(row);
+
+        });
+
+    } catch (e) {
+
+        console.error(e);
+
+    }
 
 }
 
-window.copyLink = async function(id){
+async function copyLink(id) {
 
     const link =
-    "https://yaseenclinic-cbct.github.io/referral/?doctor=" + id;
+        "https://yaseenclinic-cbct.github.io/referral/?doctor=" + id;
 
     await navigator.clipboard.writeText(link);
 
