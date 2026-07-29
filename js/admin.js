@@ -130,7 +130,7 @@ document
             const option = document.createElement("option");
 
             option.value = data.code;
-            option.textContent = ${data.name} (${data.code});
+            option.textContent = `${data.name} (${data.code})`;
 
             select.appendChild(option);
 
