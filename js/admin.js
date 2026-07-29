@@ -4,9 +4,10 @@ import {
     collection,
     getDocs,
     doc,
-    setDoc
+    setDoc,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
 console.log("admin.js loaded");
 console.log(db);
 
@@ -142,6 +143,81 @@ document
 
         console.error(e);
         alert("تعذر تحميل العيادات");
+
+    }
+
+});
+document
+.getElementById("saveDoctorBtn")
+.addEventListener("click", async () => {
+
+    const clinicCode =
+    document.getElementById("doctorClinic").value;
+
+    const doctorName =
+    document.getElementById("doctorNameInput").value.trim();
+
+    if (!clinicCode || !doctorName) {
+
+        alert("املأ جميع الحقول");
+        return;
+
+    }
+
+    try {
+
+        const doctorsRef = collection(db, "doctors");
+
+        const q = query(
+            doctorsRef,
+            where("clinicCode", "==", clinicCode)
+        );
+
+        const snapshot = await getDocs(q);
+
+        const nextNumber =
+        snapshot.size + 1;
+
+        const doctorID =
+        clinicCode +
+        String(nextNumber).padStart(3, "0");
+
+        const clinicText =
+        document.getElementById("doctorClinic");
+
+        const clinicName =
+        clinicText.options[
+            clinicText.selectedIndex
+        ].text;
+
+        await setDoc(
+            doc(db, "doctors", doctorID),
+            {
+
+                id: doctorID,
+                doctorName: doctorName,
+                clinicCode: clinicCode,
+                clinicName: clinicName,
+                active: true,
+                createdAt: new Date()
+
+            }
+        );
+
+        doctorModal.hide();
+
+        alert(
+            "تمت إضافة الطبيب\n\n" +
+            doctorID
+        );
+
+        loadDashboard();
+
+    } catch (e) {
+
+        console.error(e);
+
+        alert("حدث خطأ");
 
     }
 
