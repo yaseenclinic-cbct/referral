@@ -3,7 +3,9 @@ import { db } from "./firebase.js";
 import {
     collection,
     getDocs
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+}
+  console.log("doctors.js loaded");  
+    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 async function loadDoctors() {
 
@@ -12,6 +14,8 @@ async function loadDoctors() {
     table.innerHTML = "";
 
     const snapshot = await getDocs(collection(db, "doctors"));
+    console.log(snapshot.size);
+snapshot.forEach(doc => console.log(doc.data()));
 
     snapshot.forEach((doctor) => {
 
