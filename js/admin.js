@@ -103,3 +103,5 @@ document
     }
 
 });
+console.log(document.getElementById("doctorModal"));
+console.log(document.getElementById("addDoctorBtn"));
