@@ -1,17 +1,47 @@
 import { db } from "./firebase.js";
+
 import {
-  collection,
-  addDoc
+    doc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+const params = new URLSearchParams(window.location.search);
 
-const doctor = {
-    id: "FDC001",
-    name: "د. عامر",
-    clinic: "عيادة الفارس"
-};
+const doctorID = params.get("doctor");
 
-document.getElementById("doctorName").textContent = doctor.name;
-document.getElementById("clinicName").textContent = doctor.clinic;
+let doctor = {};
+
+async function loadDoctor() {
+
+    if (!doctorID) {
+
+        alert("رابط الطبيب غير صحيح");
+
+        return;
+
+    }
+
+    const snapshot = await getDoc(doc(db, "doctors", doctorID));
+
+    if (!snapshot.exists()) {
+
+        alert("الطبيب غير موجود");
+
+        return;
+
+    }
+
+    doctor = snapshot.data();
+
+    document.getElementById("doctorName").textContent =
+        doctor.doctorName;
+
+    document.getElementById("clinicName").textContent =
+        doctor.clinicName;
+
+}
+
+loadDoctor();
+
 
 document.getElementById("submitBtn").addEventListener("click", async () => {
 
