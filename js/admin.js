@@ -103,5 +103,46 @@ document
     }
 
 });
-console.log(document.getElementById("doctorModal"));
-console.log(document.getElementById("addDoctorBtn"));
+// ======================
+// Doctor Modal
+// ======================
+
+const doctorModal = new bootstrap.Modal(
+    document.getElementById("doctorModal")
+);
+
+document
+.getElementById("addDoctorBtn")
+.addEventListener("click", async () => {
+
+    const select = document.getElementById("doctorClinic");
+
+    select.innerHTML = "";
+
+    try {
+
+        const snapshot = await getDocs(collection(db, "clinics"));
+
+        snapshot.forEach((clinic) => {
+
+            const data = clinic.data();
+
+            const option = document.createElement("option");
+
+            option.value = data.code;
+            option.textContent = ${data.name} (${data.code});
+
+            select.appendChild(option);
+
+        });
+
+        doctorModal.show();
+
+    } catch (e) {
+
+        console.error(e);
+        alert("تعذر تحميل العيادات");
+
+    }
+
+});
