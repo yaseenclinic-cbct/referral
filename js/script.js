@@ -58,7 +58,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
         await addDoc(collection(db, "referrals"), {
 
             doctorID: doctor.id,
-            doctorName: doctor.name,
+            doctorName: doctor.Name,
             clinicName: doctor.clinic,
 
             patientName: document.getElementById("patientName").value,
