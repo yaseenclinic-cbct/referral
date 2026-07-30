@@ -2,7 +2,9 @@ import { db } from "./firebase.js";
 
 import {
     doc,
-    getDoc
+    getDoc,
+    addDoc,
+    collection
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 const params = new URLSearchParams(window.location.search);
 
