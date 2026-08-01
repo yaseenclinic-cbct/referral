@@ -39,6 +39,11 @@ async function loadDoctors() {
             const tdButton = document.createElement("td");
 
             const btn = document.createElement("button");
+            const editBtn = document.createElement("button");
+
+editBtn.className = "btn btn-warning btn-sm ms-2";
+
+editBtn.textContent = "Edit";
             const deleteBtn = document.createElement("button");
 
 deleteBtn.className = "btn btn-danger btn-sm ms-2";
@@ -71,7 +76,9 @@ deleteBtn.onclick = async function () {
 
             };
 
-            tdButton.appendChild(btn);
+           tdButton.appendChild(btn);
+
+tdButton.appendChild(editBtn);
 
 tdButton.appendChild(deleteBtn);
 
