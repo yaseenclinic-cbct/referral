@@ -8,6 +8,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 console.log("doctors.js loaded");
+let editingDoctorID = null;
+
+const doctorModal =
+new bootstrap.Modal(document.getElementById("doctorModal"));
 
 async function loadDoctors() {
 
@@ -44,9 +48,43 @@ async function loadDoctors() {
 editBtn.className = "btn btn-warning btn-sm ms-2";
 
 editBtn.textContent = "Edit";
-            editBtn.onclick = function () {
+            editBtn.onclick = async function () {
 
-    alert("Edit يعمل");
+    editingDoctorID = data.id;
+
+    document.getElementById("doctorNameInput").value =
+        data.doctorName;
+
+    const select =
+        document.getElementById("doctorClinic");
+
+    select.innerHTML = "";
+
+    const clinics =
+        await getDocs(collection(db, "clinics"));
+
+    clinics.forEach((clinic) => {
+
+        const clinicData = clinic.data();
+
+        const option =
+            document.createElement("option");
+
+        option.value = clinicData.code;
+
+        option.textContent = clinicData.name;
+
+        if (clinicData.code === data.clinicCode) {
+
+            option.selected = true;
+
+        }
+
+        select.appendChild(option);
+
+    });
+
+    doctorModal.show();
 
 };
             const deleteBtn = document.createElement("button");
