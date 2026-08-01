@@ -57,22 +57,22 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
 
         await addDoc(collection(db, "referrals"), {
 
-            doctorID: doctor.id,
-            doctorName: doctor.Name,
-            clinicName: doctor.clinic,
+    doctorID: doctor.id,
+    doctorName: doctor.doctorName,
+    clinicName: doctor.clinicName,
 
-            patientName: document.getElementById("patientName").value,
-            age: document.getElementById("patientAge").value,
-            gender: document.querySelector("input[name='gender']:checked")?.value || "",
-            phone: document.getElementById("patientPhone").value,
+    patientName: document.getElementById("patientName").value,
+    age: document.getElementById("patientAge").value,
+    gender: document.querySelector("input[name='gender']:checked")?.value || "",
+    phone: document.getElementById("patientPhone").value,
 
-            xrays: xrays,
+    xrays: xrays,
 
-            notes: document.getElementById("notes").value,
+    notes: document.getElementById("notes").value,
 
-            createdAt: new Date()
+    createdAt: new Date()
 
-        });
+});
 
         alert("✅ تم إرسال الإحالة");
 
