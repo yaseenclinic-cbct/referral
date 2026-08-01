@@ -4,7 +4,9 @@ import {
     collection,
     getDocs,
     doc,
-    deleteDoc
+    deleteDoc,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 console.log("clinics.js loaded");
@@ -43,16 +45,35 @@ async function loadClinics() {
 
             deleteBtn.onclick = async function () {
 
-                const ok = confirm("هل أنت متأكد من حذف العيادة؟");
+                const doctors = await getDocs(
 
-                if (!ok) return;
+    query(
 
-                await deleteDoc(doc(db, "clinics", data.code));
+        collection(db, "doctors"),
 
-                alert("تم حذف العيادة");
+        where("clinicCode", "==", data.code)
 
-                loadClinics();
+    )
 
+);
+
+if (doctors.size > 0) {
+
+    alert("لا يمكن حذف العيادة لأنها تحتوي على أطباء.");
+
+    return;
+
+}
+
+const ok = confirm("هل أنت متأكد من حذف العيادة؟");
+
+if (!ok) return;
+
+await deleteDoc(doc(db, "clinics", data.code));
+
+alert("تم حذف العيادة");
+
+loadClinics();
             };
 
             tdButton.appendChild(deleteBtn);
