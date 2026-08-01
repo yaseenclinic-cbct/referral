@@ -44,6 +44,11 @@ async function loadDoctors() {
 editBtn.className = "btn btn-warning btn-sm ms-2";
 
 editBtn.textContent = "Edit";
+            editBtn.onclick = function () {
+
+    alert("Edit يعمل");
+
+};
             const deleteBtn = document.createElement("button");
 
 deleteBtn.className = "btn btn-danger btn-sm ms-2";
