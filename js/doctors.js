@@ -10,8 +10,6 @@ import {
 console.log("doctors.js loaded");
 let editingDoctorID = null;
 
-const doctorModal =
-new bootstrap.Modal(document.getElementById("doctorModal"));
 
 async function loadDoctors() {
 
