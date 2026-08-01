@@ -38,7 +38,7 @@ document
 
             option.value = data.code;
             option.textContent =
-            ${data.name} (${data.code});
+            `${data.name} (${data.code})`;
 
             select.appendChild(option);
 
