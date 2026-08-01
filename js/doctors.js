@@ -118,6 +118,7 @@ deleteBtn.onclick = async function () {
 document
 .getElementById("saveDoctorBtn")
 .addEventListener("click", async () => {
+    console.log("Save button clicked");
 
     const clinicCode =
     document.getElementById("doctorClinic").value;
