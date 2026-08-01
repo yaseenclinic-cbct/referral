@@ -2,7 +2,9 @@ import { db } from "./firebase.js";
 
 import {
     collection,
-    getDocs
+    getDocs,
+    doc,
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 console.log("doctors.js loaded");
@@ -37,6 +39,27 @@ async function loadDoctors() {
             const tdButton = document.createElement("td");
 
             const btn = document.createElement("button");
+            const deleteBtn = document.createElement("button");
+
+deleteBtn.className = "btn btn-danger btn-sm ms-2";
+
+deleteBtn.textContent = "Delete";
+
+deleteBtn.onclick = async function () {
+
+    const ok = confirm(
+        "هل أنت متأكد من حذف الطبيب؟"
+    );
+
+    if (!ok) return;
+
+    await deleteDoc(doc(db, "doctors", data.id));
+
+    alert("تم حذف الطبيب");
+
+    loadDoctors();
+
+};
 
             btn.className = "btn btn-primary btn-sm";
 
@@ -49,6 +72,8 @@ async function loadDoctors() {
             };
 
             tdButton.appendChild(btn);
+
+tdButton.appendChild(deleteBtn);
 
             row.appendChild(tdID);
             row.appendChild(tdName);
