@@ -4,6 +4,9 @@ import {
     collection,
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+const referralModal = new bootstrap.Modal(
+    document.getElementById("referralModal")
+);
 let allReferrals = [];
 async function loadReferrals() {
 
@@ -105,7 +108,46 @@ function renderReferrals(list) {
         row.appendChild(tdXrays);
         row.appendChild(tdNotes);
         row.appendChild(tdDate);
+row.style.cursor = "pointer";
 
+row.onclick = function () {
+
+    document.getElementById("viewDoctor").textContent =
+        data.doctorName || "";
+
+    document.getElementById("viewClinic").textContent =
+        data.clinicName || "";
+
+    document.getElementById("viewPatient").textContent =
+        data.patientName || "";
+
+    document.getElementById("viewAge").textContent =
+        data.age || "";
+
+    document.getElementById("viewGender").textContent =
+        data.gender || "";
+
+    document.getElementById("viewPhone").textContent =
+        data.phone || "";
+
+    document.getElementById("viewXrays").textContent =
+        Array.isArray(data.xrays)
+        ? data.xrays.join(", ")
+        : data.xrays || "";
+
+    document.getElementById("viewNotes").textContent =
+        data.notes || "";
+
+    document.getElementById("viewDate").textContent =
+        data.createdAt
+        ? new Date(
+            data.createdAt.seconds * 1000
+          ).toLocaleString()
+        : "";
+
+    referralModal.show();
+
+};
         table.appendChild(row);
 
     });
