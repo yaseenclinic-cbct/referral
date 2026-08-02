@@ -11,6 +11,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 console.log("doctors.js loaded");
+let allDoctors = [];
 const doctorModal = new bootstrap.Modal(
     document.getElementById("doctorModal")
 );
@@ -66,12 +67,14 @@ async function loadDoctors() {
     try {
 
         const snapshot = await getDocs(collection(db, "doctors"));
+        allDoctors = [];
 
         console.log("Doctors:", snapshot.size);
 
         snapshot.forEach((doctor) => {
 
             const data = doctor.data();
+            allDoctors.push(data);
 
             const row = document.createElement("tr");
 
