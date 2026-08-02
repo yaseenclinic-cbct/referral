@@ -5,12 +5,33 @@ import {
     getDocs,
     doc,
     deleteDoc,
+    setDoc,
+    updateDoc,
     query,
     where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 console.log("clinics.js loaded");
+const clinicModal = new bootstrap.Modal(
+    document.getElementById("clinicModal")
+);
 
+let editingClinic = null;
+
+document
+.getElementById("addClinicBtn")
+.onclick = function () {
+
+    editingClinic = null;
+
+    document.getElementById("clinicCodeInput").value = "";
+    document.getElementById("clinicNameInput").value = "";
+
+    document.getElementById("clinicCodeInput").disabled = false;
+
+    clinicModal.show();
+
+};
 async function loadClinics() {
 
     const table = document.getElementById("clinicTable");
