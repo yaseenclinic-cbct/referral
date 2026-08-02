@@ -73,44 +73,25 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     createdAt: new Date()
 
 });
-await fetch(
+fetch(
     "https://script.google.com/macros/s/AKfycbwl_YFz58K6Cu1238_fbS4UoQkp5JIhpq9x7lLhWw0jdibnjf-obpgb-V9MPtuK7fg/exec",
     {
         method: "POST",
-
+        mode: "no-cors",
         headers: {
-            "Content-Type":
-                "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded"
         },
-
         body: new URLSearchParams({
-
             doctorID: doctor.id,
-
             doctorName: doctor.doctorName,
-
             clinicName: doctor.clinicName,
-
-            patientName:
-                document.getElementById("patientName").value,
-
-            age:
-                document.getElementById("patientAge").value,
-
-            gender:
-                document.querySelector("input[name='gender']:checked")?.value || "",
-
-            phone:
-                document.getElementById("patientPhone").value,
-
-            xrays:
-                xrays.join(", "),
-
-            notes:
-                document.getElementById("notes").value
-
+            patientName: document.getElementById("patientName").value,
+            age: document.getElementById("patientAge").value,
+            gender: document.querySelector("input[name='gender']:checked")?.value || "",
+            phone: document.getElementById("patientPhone").value,
+            xrays: xrays.join(", "),
+            notes: document.getElementById("notes").value
         })
-
     }
 );
         alert("✅ تم إرسال الإحالة");
