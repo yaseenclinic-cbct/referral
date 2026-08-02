@@ -112,4 +112,44 @@ function renderReferrals(list) {
     });
 
 }
+document
+.getElementById("searchReferral")
+.addEventListener("input", function () {
+
+    const search =
+        this.value.toLowerCase();
+
+    const filtered =
+        allReferrals.filter((data) => {
+
+            return (
+                (data.doctorName || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (data.clinicName || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (data.patientName || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (data.phone || "")
+                .toLowerCase()
+                .includes(search)
+
+            );
+
+        });
+
+    renderReferrals(filtered);
+
+});
 loadReferrals();
