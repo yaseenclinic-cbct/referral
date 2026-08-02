@@ -115,6 +115,54 @@ deleteBtn.onclick = async function () {
     await deleteDoc(doc(db, "doctors", data.id));
 
     alert("تم حذف الطبيب");
+
+    loadDoctors();
+
+};
+
+            btn.className = "btn btn-primary btn-sm";
+
+            btn.textContent = "Copy Link";
+
+            btn.onclick = function () {
+
+                copyLink(data.id);
+
+            };
+
+           tdButton.appendChild(btn);
+
+tdButton.appendChild(editBtn);
+
+tdButton.appendChild(deleteBtn);
+
+            row.appendChild(tdID);
+            row.appendChild(tdName);
+            row.appendChild(tdClinic);
+            row.appendChild(tdButton);
+
+            table.appendChild(row);
+
+        });
+
+    } catch (e) {
+
+        console.error(e);
+
+    }
+
+}
+
+async function copyLink(id) {
+
+    const link =
+        "https://yaseenclinic-cbct.github.io/referral/?doctor=" + id;
+
+    await navigator.clipboard.writeText(link);
+
+    alert("تم نسخ الرابط");
+
+}
 document
 .getElementById("saveDoctorBtn")
 .addEventListener("click", async () => {
@@ -192,52 +240,4 @@ document
     }
 
 });
-    loadDoctors();
-
-};
-
-            btn.className = "btn btn-primary btn-sm";
-
-            btn.textContent = "Copy Link";
-
-            btn.onclick = function () {
-
-                copyLink(data.id);
-
-            };
-
-           tdButton.appendChild(btn);
-
-tdButton.appendChild(editBtn);
-
-tdButton.appendChild(deleteBtn);
-
-            row.appendChild(tdID);
-            row.appendChild(tdName);
-            row.appendChild(tdClinic);
-            row.appendChild(tdButton);
-
-            table.appendChild(row);
-
-        });
-
-    } catch (e) {
-
-        console.error(e);
-
-    }
-
-}
-
-async function copyLink(id) {
-
-    const link =
-        "https://yaseenclinic-cbct.github.io/referral/?doctor=" + id;
-
-    await navigator.clipboard.writeText(link);
-
-    alert("تم نسخ الرابط");
-
-}
-
 loadDoctors();
