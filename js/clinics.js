@@ -48,95 +48,116 @@ async function loadClinics() {
 
         snapshot.forEach((clinic) => {
 
-            const data = clinic.data();
-            allClinics.push(data);
+    allClinics.push(clinic.data());
 
-            const row = document.createElement("tr");
+});
 
-            const tdCode = document.createElement("td");
-            tdCode.textContent = data.code;
-
-            const tdName = document.createElement("td");
-            tdName.textContent = data.name;
-
-            const tdButton = document.createElement("td");
-const editBtn = document.createElement("button");
-
-editBtn.className = "btn btn-warning btn-sm ms-2";
-
-editBtn.textContent = "Edit";
-
-editBtn.onclick = function () {
-
-    editingClinic = data.code;
-
-    document.getElementById("clinicCodeInput").value =
-        data.code;
-
-    document.getElementById("clinicNameInput").value =
-        data.name;
-
-    document.getElementById("clinicCodeInput").disabled = true;
-
-    clinicModal.show();
-
-};
-            const deleteBtn = document.createElement("button");
-
-            deleteBtn.className = "btn btn-danger btn-sm";
-
-            deleteBtn.textContent = "Delete";
-
-            deleteBtn.onclick = async function () {
-
-                const doctors = await getDocs(
-
-    query(
-
-        collection(db, "doctors"),
-
-        where("clinicCode", "==", data.code)
-
-    )
-
-);
-
-if (doctors.size > 0) {
-
-    alert("لا يمكن حذف العيادة لأنها تحتوي على أطباء.");
-
-    return;
-
-}
-
-const ok = confirm("هل أنت متأكد من حذف العيادة؟");
-
-if (!ok) return;
-
-await deleteDoc(doc(db, "clinics", data.code));
-
-alert("تم حذف العيادة");
-
-loadClinics();
-            };
-
-            tdButton.appendChild(editBtn);
-
-tdButton.appendChild(deleteBtn);
-
-            row.appendChild(tdCode);
-            row.appendChild(tdName);
-            row.appendChild(tdButton);
-
-            table.appendChild(row);
-
-        });
+renderClinics(allClinics);
 
     } catch (e) {
 
         console.error(e);
 
     }
+
+}
+function renderClinics(list) {
+
+    const table =
+        document.getElementById("clinicTable");
+
+    table.innerHTML = "";
+
+    list.forEach((data) => {
+
+        const row =
+            document.createElement("tr");
+
+        const tdCode =
+            document.createElement("td");
+        tdCode.textContent = data.code;
+
+        const tdName =
+            document.createElement("td");
+        tdName.textContent = data.name;
+
+        const tdButton =
+            document.createElement("td");
+
+        const editBtn =
+            document.createElement("button");
+
+        editBtn.className =
+            "btn btn-warning btn-sm ms-2";
+
+        editBtn.textContent = "Edit";
+
+        editBtn.onclick = function () {
+
+            editingClinic = data.code;
+
+            document.getElementById("clinicCodeInput").value =
+                data.code;
+
+            document.getElementById("clinicNameInput").value =
+                data.name;
+
+            document.getElementById("clinicCodeInput").disabled = true;
+
+            clinicModal.show();
+
+        };
+
+        const deleteBtn =
+            document.createElement("button");
+
+        deleteBtn.className =
+            "btn btn-danger btn-sm";
+
+        deleteBtn.textContent =
+            "Delete";
+
+        deleteBtn.onclick = async function () {
+
+            const doctors =
+                await getDocs(
+
+                    query(
+                        collection(db, "doctors"),
+                        where("clinicCode", "==", data.code)
+                    )
+
+                );
+
+            if (doctors.size > 0) {
+
+                alert("لا يمكن حذف العيادة لأنها تحتوي على أطباء.");
+
+                return;
+
+            }
+
+            if (!confirm("هل أنت متأكد من حذف العيادة؟"))
+                return;
+
+            await deleteDoc(
+                doc(db, "clinics", data.code)
+            );
+
+            loadClinics();
+
+        };
+
+        tdButton.appendChild(editBtn);
+        tdButton.appendChild(deleteBtn);
+
+        row.appendChild(tdCode);
+        row.appendChild(tdName);
+        row.appendChild(tdButton);
+
+        table.appendChild(row);
+
+    });
 
 }
 document
@@ -212,4 +233,33 @@ document
     }
 
 };
+document
+.getElementById("searchClinic")
+.addEventListener("input", function () {
+
+    const search =
+        this.value.toLowerCase();
+
+    const filtered =
+        allClinics.filter((data) => {
+
+            return (
+
+                (data.code || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (data.name || "")
+                .toLowerCase()
+                .includes(search)
+
+            );
+
+        });
+
+    renderClinics(filtered);
+
+});
 loadClinics();
