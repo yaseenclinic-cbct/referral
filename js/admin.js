@@ -8,14 +8,14 @@ import {
     query,
     orderBy,
     deleteDoc,
-    where
+    where,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 console.log("admin.js loaded");
-console.log(db);
 
 // ======================
-// Dashboard
+// Dashboard & Load Referrals
 // ======================
 
 async function loadDashboard() {
@@ -23,50 +23,60 @@ async function loadDashboard() {
         const doctors = await getDocs(collection(db, "doctors"));
         const clinics = await getDocs(collection(db, "clinics"));
         
-        // جلب الإحالات مرتبة حسب تاريخ الإنشاء من الأحدث للأقدم
-        const referralsQuery = query(
-            collection(db, "referrals"),
-            orderBy("createdAt", "desc")
-        );
-        const referrals = await getDocs(referralsQuery);
-
-        console.log("Doctors:", doctors.size);
-        console.log("Clinics:", clinics.size);
-        console.log("Referrals:", referrals.size);
-
         document.getElementById("doctorCount").textContent = doctors.size;
         document.getElementById("clinicCount").textContent = clinics.size;
-        document.getElementById("referralCount").textContent = referrals.size;
 
-        // استدعاء دالة عرض الإحالات في الجدول
-        renderReferrals(referrals);
+        // جلب الإحالات وترتيبها
+        let referralsList = [];
+        try {
+            const referralsQuery = query(
+                collection(db, "referrals"),
+                orderBy("createdAt", "desc")
+            );
+            const snapshot = await getDocs(referralsQuery);
+            snapshot.forEach(doc => referralsList.push({ id: doc.id, ...doc.data() }));
+        } catch (queryErr) {
+            console.warn("Firestore Index Error, sorting manually...", queryErr);
+            // في حال عدم وجود Index نأخذ البيانات ونرتبها برمجياً
+            const rawSnapshot = await getDocs(collection(db, "referrals"));
+            rawSnapshot.forEach(doc => referralsList.push({ id: doc.id, ...doc.data() }));
+            
+            referralsList.sort((a, b) => {
+                const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+                const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+                return dateB - dateA; // ترتيب من الأحدث للأقدم
+            });
+        }
+
+        document.getElementById("referralCount").textContent = referralsList.length;
+
+        // عرض الإحالات في الجدول
+        renderReferrals(referralsList);
 
     } catch (e) {
         console.error("Dashboard Error:", e);
     }
 }
 
-// دالة لعرض الإحالات داخل الجدول في لوحة التحكم
-function renderReferrals(snapshot) {
+function renderReferrals(referrals) {
     const tableBody = document.getElementById("referralsTableBody");
-    if (!tableBody) return; // في حال عدم وجود الجدول في الصفحة
+    if (!tableBody) return;
 
     tableBody.innerHTML = "";
 
-    snapshot.forEach((doc) => {
-        const data = doc.data();
-        
-        // تنسيق التاريخ ليكون مقروءاً
-        let formattedDate = "";
+    referrals.forEach((data) => {
+        let formattedDate = "غير محدد";
         if (data.createdAt) {
             const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
-            formattedDate = dateObj.toLocaleString("ar-IQ", {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            if (!isNaN(dateObj)) {
+                formattedDate = dateObj.toLocaleString("ar-IQ", {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
         }
 
         const row = document.createElement("tr");
@@ -112,17 +122,15 @@ document.getElementById("saveClinicBtn")?.addEventListener("click", async () => 
             .value
             .trim();
 
-        // تم تصحيح الشرط الشرطي إضافة ||
         if (!code || !name) {
             alert("املأ جميع الحقول");
             return;
         }
-
         await setDoc(doc(db, "clinics", code), {
             code: code,
             name: name,
             active: true,
-            createdAt: new Date()
+            createdAt: serverTimestamp()
         });
 
         clinicModal.hide();
@@ -145,6 +153,7 @@ const doctorModal = new bootstrap.Modal(
 document.getElementById("addDoctorBtn")?.addEventListener("click", async () => {
     const select = document.getElementById("doctorClinic");
     select.innerHTML = "";
+
     try {
         const snapshot = await getDocs(collection(db, "clinics"));
 
@@ -168,7 +177,6 @@ document.getElementById("saveDoctorBtn")?.addEventListener("click", async () => 
     const clinicCode = document.getElementById("doctorClinic").value;
     const doctorName = document.getElementById("doctorNameInput").value.trim();
 
-    // تم تصحيح الشرط الشرطي إضافة ||
     if (!clinicCode || !doctorName) {
         alert("املأ جميع الحقول");
         return;
@@ -195,7 +203,7 @@ document.getElementById("saveDoctorBtn")?.addEventListener("click", async () => 
             clinicCode: clinicCode,
             clinicName: clinicName,
             active: true,
-            createdAt: new Date()
+            createdAt: serverTimestamp()
         });
 
         doctorModal.hide();
