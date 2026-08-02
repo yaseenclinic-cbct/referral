@@ -2,7 +2,9 @@ import { db } from "./firebase.js";
 
 import {
     collection,
-    getDocs
+    getDocs,
+    deleteDoc,
+    doc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 const referralModal = new bootstrap.Modal(
     document.getElementById("referralModal")
