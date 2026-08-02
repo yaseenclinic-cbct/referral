@@ -166,7 +166,6 @@ async function copyLink(id) {
 document
 .getElementById("saveDoctorBtn")
 .addEventListener("click", async () => {
-    alert("save clicked");
 
     const clinicCode =
     document.getElementById("doctorClinic").value;
