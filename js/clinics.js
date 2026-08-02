@@ -136,5 +136,77 @@ tdButton.appendChild(deleteBtn);
     }
 
 }
+document
+.getElementById("saveClinicBtn")
+.onclick = async function () {
 
+    const code =
+        document.getElementById("clinicCodeInput").value.trim();
+
+    const name =
+        document.getElementById("clinicNameInput").value.trim();
+
+    if (!code || !name) {
+
+        alert("املأ جميع الحقول");
+
+        return;
+
+    }
+
+    try {
+
+        if (editingClinic == null) {
+
+            const exists = await getDocs(
+                query(
+                    collection(db, "clinics"),
+                    where("code", "==", code)
+                )
+            );
+
+            if (exists.size > 0) {
+
+                alert("كود العيادة مستخدم مسبقاً");
+
+                return;
+
+            }
+
+            await setDoc(
+                doc(db, "clinics", code),
+                {
+                    code: code,
+                    name: name
+                }
+            );
+
+            alert("تمت إضافة العيادة");
+
+        } else {
+
+            await updateDoc(
+                doc(db, "clinics", editingClinic),
+                {
+                    name: name
+                }
+            );
+
+            alert("تم تعديل العيادة");
+
+        }
+
+        clinicModal.hide();
+
+        loadClinics();
+
+    } catch (e) {
+
+        console.error(e);
+
+        alert("حدث خطأ");
+
+    }
+
+};
 loadClinics();
