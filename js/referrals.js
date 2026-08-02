@@ -23,26 +23,62 @@ async function loadReferrals() {
 
             const row = document.createElement("tr");
 
-            const tdPatient = document.createElement("td");
-            tdPatient.textContent = data.patientName || "";
-
             const tdDoctor = document.createElement("td");
-            tdDoctor.textContent = data.doctorName || "";
+tdDoctor.textContent = data.doctorName || "";
 
-            const tdClinic = document.createElement("td");
-            tdClinic.textContent = data.clinicName || "";
+const tdClinic = document.createElement("td");
+tdClinic.textContent = data.clinicName || "";
 
-            const tdPhone = document.createElement("td");
-            tdPhone.textContent = data.phone || "";
+const tdPatient = document.createElement("td");
+tdPatient.textContent = data.patientName || "";
 
-            const tdXrays = document.createElement("td");
-            tdXrays.textContent = data.xrays || "";
+const tdAge = document.createElement("td");
+tdAge.textContent = data.age || "";
 
-            row.appendChild(tdPatient);
-            row.appendChild(tdDoctor);
-            row.appendChild(tdClinic);
-            row.appendChild(tdPhone);
-            row.appendChild(tdXrays);
+const tdPhone = document.createElement("td");
+tdPhone.textContent = data.phone || "";
+
+const tdGender = document.createElement("td");
+tdGender.textContent = data.gender || "";
+
+const tdXrays = document.createElement("td");
+
+if (Array.isArray(data.xrays)) {
+
+    tdXrays.textContent = data.xrays.join(", ");
+
+} else {
+
+    tdXrays.textContent = data.xrays || "";
+
+}
+
+const tdNotes = document.createElement("td");
+tdNotes.textContent = data.notes || "";
+
+const tdDate = document.createElement("td");
+
+if (data.createdAt) {
+
+    tdDate.textContent =
+        new Date(data.createdAt.seconds * 1000)
+        .toLocaleString();
+
+} else {
+
+    tdDate.textContent = "";
+
+}
+
+row.appendChild(tdDoctor);
+row.appendChild(tdClinic);
+row.appendChild(tdPatient);
+row.appendChild(tdAge);
+row.appendChild(tdPhone);
+row.appendChild(tdGender);
+row.appendChild(tdXrays);
+row.appendChild(tdNotes);
+row.appendChild(tdDate);
 
             table.appendChild(row);
 
