@@ -4,8 +4,7 @@ import {
     doc,
     getDoc,
     addDoc,
-    collection,
-    serverTimestamp
+    collection
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -26,7 +25,6 @@ async function loadDoctor() {
         return;
     }
 
-    // تم تعديل هذا السطر لحفظ الـ ID الخاص بالمستند مع البيانات
     doctor = { id: snapshot.id, ...snapshot.data() };
 
     document.getElementById("doctorName").textContent = doctor.doctorName || "";
@@ -43,7 +41,6 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
 
     const patientName = document.getElementById("patientName").value;
     const age = document.getElementById("patientAge").value;
-    // تم تصحيح خطأ الـ Syntax في السطر التالي (إضافة || بدلاً من الفراغ)
     const gender = document.querySelector("input[name='gender']:checked")?.value || "";
     const phone = document.getElementById("patientPhone").value;
     const notes = document.getElementById("notes").value;
@@ -60,7 +57,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
             phone: phone,
             xrays: xrays,
             notes: notes,
-            serverTimestamp()
+            createdAt: new Date().toISOString() // تاريخ نصي قياسي مضاعف الدقة للترتيب
         });
 
         // 2. الإرسال إلى Google Sheet
