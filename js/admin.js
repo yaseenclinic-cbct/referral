@@ -1,217 +1,94 @@
 import { db } from "./firebase.js";
 
 import {
-    collection,
-    getDocs,
     doc,
-    setDoc,
-    query,
-    orderBy,
-    deleteDoc,
-    where,
+    getDoc,
+    addDoc,
+    collection,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-console.log("admin.js loaded");
+const params = new URLSearchParams(window.location.search);
+const doctorID = params.get("doctor");
 
-// ======================
-// Dashboard & Load Referrals
-// ======================
+let doctor = {};
 
-async function loadDashboard() {
-    try {
-        const doctors = await getDocs(collection(db, "doctors"));
-        const clinics = await getDocs(collection(db, "clinics"));
-        
-        document.getElementById("doctorCount").textContent = doctors.size;
-        document.getElementById("clinicCount").textContent = clinics.size;
-
-        // جلب الإحالات وترتيبها
-        let referralsList = [];
-        try {
-            const referralsQuery = query(
-                collection(db, "referrals"),
-                orderBy("createdAt", "desc")
-            );
-            const snapshot = await getDocs(referralsQuery);
-            snapshot.forEach(doc => referralsList.push({ id: doc.id, ...doc.data() }));
-        } catch (queryErr) {
-            console.warn("Firestore Index Error, sorting manually...", queryErr);
-            // في حال عدم وجود Index نأخذ البيانات ونرتبها برمجياً
-            const rawSnapshot = await getDocs(collection(db, "referrals"));
-            rawSnapshot.forEach(doc => referralsList.push({ id: doc.id, ...doc.data() }));
-            
-            referralsList.sort((a, b) => {
-                const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
-                const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
-                return dateB - dateA; // ترتيب من الأحدث للأقدم
-            });
-        }
-
-        document.getElementById("referralCount").textContent = referralsList.length;
-
-        // عرض الإحالات في الجدول
-        renderReferrals(referralsList);
-
-    } catch (e) {
-        console.error("Dashboard Error:", e);
-    }
-}
-
-function renderReferrals(referrals) {
-    const tableBody = document.getElementById("referralsTableBody");
-    if (!tableBody) return;
-
-    tableBody.innerHTML = "";
-
-    referrals.forEach((data) => {
-        let formattedDate = "غير محدد";
-        if (data.createdAt) {
-            const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
-            if (!isNaN(dateObj)) {
-                formattedDate = dateObj.toLocaleString("ar-IQ", {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            }
-        }
-
-        const row = document.createElement("tr");
-        row.innerHTML = 
-            <td>${data.doctorName || ""}</td>
-            <td>${data.clinicName || ""}</td>
-            <td>${data.patientName || ""}</td>
-            <td>${data.age || ""}</td>
-            <td>${data.gender || ""}</td>
-            <td>${data.phone || ""}</td>
-            <td>${Array.isArray(data.xrays) ? data.xrays.join(", ") : (data.xrays || "")}</td>
-            <td>${data.notes || ""}</td>
-            <td>${formattedDate}</td>
-        ;
-        tableBody.appendChild(row);
-    });
-}
-
-loadDashboard();
-
-// ======================
-// Clinic Modal
-// ======================
-
-const clinicModal = new bootstrap.Modal(
-    document.getElementById("clinicModal")
-);
-
-document.getElementById("addClinicBtn")?.addEventListener("click", () => {
-    clinicModal.show();
-});
-
-document.getElementById("saveClinicBtn")?.addEventListener("click", async () => {
-    try {
-        const code = document
-            .getElementById("clinicCode")
-            .value
-            .trim()
-            .toUpperCase();
-
-        const name = document
-            .getElementById("clinicName")
-            .value
-            .trim();
-
-        if (!code || !name) {
-            alert("املأ جميع الحقول");
-            return;
-        }
-        await setDoc(doc(db, "clinics", code), {
-            code: code,
-            name: name,
-            active: true,
-            createdAt: serverTimestamp()
-        });
-
-        clinicModal.hide();
-        alert("تمت إضافة العيادة بنجاح");
-        loadDashboard();
-
-    } catch (e) {
-        console.error(e);
-    }
-});
-
-// ======================
-// Doctor Modal
-// ======================
-
-const doctorModal = new bootstrap.Modal(
-    document.getElementById("doctorModal")
-);
-
-document.getElementById("addDoctorBtn")?.addEventListener("click", async () => {
-    const select = document.getElementById("doctorClinic");
-    select.innerHTML = "";
-
-    try {
-        const snapshot = await getDocs(collection(db, "clinics"));
-
-        snapshot.forEach((clinic) => {
-            const data = clinic.data();
-            const option = document.createElement("option");
-            option.value = data.code;
-            option.textContent = ${data.name} (${data.code});
-            select.appendChild(option);
-        });
-
-        doctorModal.show();
-
-    } catch (e) {
-        console.error(e);
-        alert("تعذر تحميل العيادات");
-    }
-});
-
-document.getElementById("saveDoctorBtn")?.addEventListener("click", async () => {
-    const clinicCode = document.getElementById("doctorClinic").value;
-    const doctorName = document.getElementById("doctorNameInput").value.trim();
-
-    if (!clinicCode || !doctorName) {
-        alert("املأ جميع الحقول");
+async function loadDoctor() {
+    if (!doctorID) {
+        alert("رابط الطبيب غير صحيح");
         return;
     }
 
+    const snapshot = await getDoc(doc(db, "doctors", doctorID));
+
+    if (!snapshot.exists()) {
+        alert("الطبيب غير موجود");
+        return;
+    }
+
+    doctor = { id: snapshot.id, ...snapshot.data() };
+
+    document.getElementById("doctorName").textContent = doctor.doctorName || "";
+    document.getElementById("clinicName").textContent = doctor.clinicName || "";
+}
+
+loadDoctor();
+
+document.getElementById("submitBtn").addEventListener("click", async () => {
+    const xrays = [];
+    document.querySelectorAll("input[type='checkbox']:checked").forEach(c => {
+        xrays.push(c.value);
+    });
+
+    const patientName = document.getElementById("patientName").value;
+    const age = document.getElementById("patientAge").value;
+    const gender = document.querySelector("input[name='gender']:checked")?.value || "";
+    const phone = document.getElementById("patientPhone").value;
+    const notes = document.getElementById("notes").value;
+
     try {
-        const doctorsRef = collection(db, "doctors");
-        const q = query(
-            doctorsRef,
-            where("clinicCode", "==", clinicCode)
-        );
-
-        const snapshot = await getDocs(q);
-        const nextNumber = snapshot.size + 1;
-
-        const doctorID = clinicCode + String(nextNumber).padStart(3, "0");
-
-        const clinicSelect = document.getElementById("doctorClinic");
-        const clinicName = clinicSelect.options[clinicSelect.selectedIndex].text;
-
-        await setDoc(doc(db, "doctors", doctorID), {
-            id: doctorID,
-            doctorName: doctorName,
-            clinicCode: clinicCode,
-            clinicName: clinicName,
-            active: true,
+        // 1. الحفظ في Firebase مع توقيت الخادم
+        await addDoc(collection(db, "referrals"), {
+            doctorID: doctor.id || "",
+            doctorName: doctor.doctorName || "",
+            clinicName: doctor.clinicName || "",
+            patientName: patientName,
+            age: age,
+            gender: gender,
+            phone: phone,
+            xrays: xrays,
+            notes: notes,
             createdAt: serverTimestamp()
         });
 
-        doctorModal.hide();
-        alert("تمت إضافة الطبيب\n\n" + doctorID);
-        loadDashboard();
+        // 2. الإرسال إلى Google Sheet
+        const formData = new URLSearchParams();
+        formData.append("doctorID", doctor.id || "");
+        formData.append("doctorName", doctor.doctorName || "");
+        formData.append("clinicName", doctor.clinicName || "");
+        formData.append("patientName", patientName);
+        formData.append("age", age);
+        formData.append("gender", gender);
+        formData.append("phone", phone);
+        formData.append("xrays", xrays.join(", "));
+        formData.append("notes", notes);
+
+        await fetch(
+            "https://script.google.com/macros/s/AKfycbwl_YFz58K6Cu1238_fbS4UoQkp5JIhpq9x7lLhWw0jdibnjf-obpgb-V9MPtuK7fg/exec",
+            {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData
+            }
+        );
+
+        alert("✅ تم إرسال الإحالة بنجاح");
 
     } catch (e) {
-        console.error(e);
-        alert("حدث خطأ");
+        console.error("Error submitting referral:", e);
+        alert("حدث خطأ أثناء إرسال البيانات");
     }
 });
