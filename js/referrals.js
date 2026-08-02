@@ -14,9 +14,8 @@ async function loadReferrals() {
     try {
 
         const snapshot = await getDocs(collection(db, "referrals"));
-let allReferrals = [];
         console.log("Referrals:", snapshot.size);
-
+allReferrals = [];
         snapshot.forEach((referral) => {
 
     allReferrals.push(referral.data());
