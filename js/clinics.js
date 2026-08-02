@@ -10,6 +10,7 @@ import {
     query,
     where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+let allClinics = [];
 
 console.log("clinics.js loaded");
 const clinicModal = new bootstrap.Modal(
@@ -41,12 +42,14 @@ async function loadClinics() {
     try {
 
         const snapshot = await getDocs(collection(db, "clinics"));
+        allClinics = [];
 
         console.log("Clinics:", snapshot.size);
 
         snapshot.forEach((clinic) => {
 
             const data = clinic.data();
+            allClinics.push(data);
 
             const row = document.createElement("tr");
 
