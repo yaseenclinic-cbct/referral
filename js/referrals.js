@@ -23,7 +23,13 @@ async function loadReferrals() {
 allReferrals = [];
         snapshot.forEach((referral) => {
 
-    allReferrals.push(referral.data());
+    allReferrals.push({
+
+        docId: referral.id,
+
+        ...referral.data()
+
+    });
 
 });
 
@@ -93,7 +99,37 @@ function renderReferrals(list) {
 
         const tdDate =
             document.createElement("td");
+const tdAction =
+    document.createElement("td");
 
+const deleteBtn =
+    document.createElement("button");
+
+deleteBtn.className =
+    "btn btn-danger btn-sm";
+
+deleteBtn.textContent =
+    "Delete";
+        deleteBtn.onclick = async function (e) {
+
+    e.stopPropagation();
+
+    const ok = confirm(
+        "هل أنت متأكد من حذف هذه الإحالة؟"
+    );
+
+    if (!ok) return;
+
+    await deleteDoc(
+        doc(db, "referrals", data.docId)
+    );
+
+    alert("تم حذف الإحالة");
+
+    loadReferrals();
+
+};
+        tdAction.appendChild(deleteBtn);
         tdDate.textContent =
             data.createdAt
             ? new Date(
@@ -110,6 +146,7 @@ function renderReferrals(list) {
         row.appendChild(tdXrays);
         row.appendChild(tdNotes);
         row.appendChild(tdDate);
+        row.appendChild(tdAction);
 row.style.cursor = "pointer";
 
 row.onclick = function () {
