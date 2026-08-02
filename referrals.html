@@ -62,7 +62,65 @@ placeholder="🔍 ابحث باسم الطبيب أو العيادة أو الم
 </table>
 
 </div>
+<div class="modal fade"
+id="referralModal"
+tabindex="-1">
 
+<div class="modal-dialog modal-lg">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+تفاصيل الإحالة
+</h5>
+
+<button
+type="button"
+class="btn-close"
+data-bs-dismiss="modal">
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<p><strong>الطبيب:</strong>
+<span id="viewDoctor"></span></p>
+
+<p><strong>العيادة:</strong>
+<span id="viewClinic"></span></p>
+
+<p><strong>المريض:</strong>
+<span id="viewPatient"></span></p>
+
+<p><strong>العمر:</strong>
+<span id="viewAge"></span></p>
+
+<p><strong>الجنس:</strong>
+<span id="viewGender"></span></p>
+
+<p><strong>الهاتف:</strong>
+<span id="viewPhone"></span></p>
+
+<p><strong>الأشعة:</strong>
+<span id="viewXrays"></span></p>
+
+<p><strong>الملاحظات:</strong>
+<span id="viewNotes"></span></p>
+
+<p><strong>التاريخ:</strong>
+<span id="viewDate"></span></p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="js/referrals.js"></script>
 
 </body>
