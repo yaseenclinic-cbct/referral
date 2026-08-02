@@ -57,7 +57,27 @@ async function loadClinics() {
             tdName.textContent = data.name;
 
             const tdButton = document.createElement("td");
+const editBtn = document.createElement("button");
 
+editBtn.className = "btn btn-warning btn-sm ms-2";
+
+editBtn.textContent = "Edit";
+
+editBtn.onclick = function () {
+
+    editingClinic = data.code;
+
+    document.getElementById("clinicCodeInput").value =
+        data.code;
+
+    document.getElementById("clinicNameInput").value =
+        data.name;
+
+    document.getElementById("clinicCodeInput").disabled = true;
+
+    clinicModal.show();
+
+};
             const deleteBtn = document.createElement("button");
 
             deleteBtn.className = "btn btn-danger btn-sm";
@@ -97,7 +117,9 @@ alert("تم حذف العيادة");
 loadClinics();
             };
 
-            tdButton.appendChild(deleteBtn);
+            tdButton.appendChild(editBtn);
+
+tdButton.appendChild(deleteBtn);
 
             row.appendChild(tdCode);
             row.appendChild(tdName);
