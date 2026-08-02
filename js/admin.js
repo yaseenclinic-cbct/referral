@@ -4,8 +4,7 @@ import {
     doc,
     getDoc,
     addDoc,
-    collection,
-    serverTimestamp
+    collection
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -47,7 +46,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     const notes = document.getElementById("notes").value;
 
     try {
-        // 1. الحفظ في Firebase مع توقيت الخادم
+        // 1. الحفظ في Firebase
         await addDoc(collection(db, "referrals"), {
             doctorID: doctor.id || "",
             doctorName: doctor.doctorName || "",
@@ -58,7 +57,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
             phone: phone,
             xrays: xrays,
             notes: notes,
-            createdAt: serverTimestamp()
+            createdAt: new Date().toISOString() // تاريخ نصي قياسي مضاعف الدقة للترتيب
         });
 
         // 2. الإرسال إلى Google Sheet
