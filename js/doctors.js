@@ -71,83 +71,13 @@ async function loadDoctors() {
 
         console.log("Doctors:", snapshot.size);
 
-        snapshot.forEach((doctor) => {
+       snapshot.forEach((doctor) => {
 
-            const data = doctor.data();
-            allDoctors.push(data);
+    allDoctors.push(doctor.data());
 
-            const row = document.createElement("tr");
+});
 
-            const tdID = document.createElement("td");
-            tdID.textContent = data.id;
-
-            const tdName = document.createElement("td");
-            tdName.textContent = data.doctorName;
-
-            const tdClinic = document.createElement("td");
-            tdClinic.textContent = data.clinicName;
-
-            const tdButton = document.createElement("td");
-
-            const btn = document.createElement("button");
-            const editBtn = document.createElement("button");
-
-editBtn.className = "btn btn-warning btn-sm ms-2";
-
-editBtn.textContent = "Edit";
-            editBtn.onclick = function () {
-
-    window.location =
-        "edit-doctor.html?id=" + data.id;
-
-};
-            const deleteBtn = document.createElement("button");
-
-deleteBtn.className = "btn btn-danger btn-sm ms-2";
-
-deleteBtn.textContent = "Delete";
-
-deleteBtn.onclick = async function () {
-
-    const ok = confirm(
-        "هل أنت متأكد من حذف الطبيب؟"
-    );
-
-    if (!ok) return;
-
-    await deleteDoc(doc(db, "doctors", data.id));
-
-    alert("تم حذف الطبيب");
-
-    loadDoctors();
-
-};
-
-            btn.className = "btn btn-primary btn-sm";
-
-            btn.textContent = "Copy Link";
-
-            btn.onclick = function () {
-
-                copyLink(data.id);
-
-            };
-
-           tdButton.appendChild(btn);
-
-tdButton.appendChild(editBtn);
-
-tdButton.appendChild(deleteBtn);
-
-            row.appendChild(tdID);
-            row.appendChild(tdName);
-            row.appendChild(tdClinic);
-            row.appendChild(tdButton);
-
-            table.appendChild(row);
-
-        });
-
+renderDoctors(allDoctors);
     } catch (e) {
 
         console.error(e);
@@ -155,7 +85,69 @@ tdButton.appendChild(deleteBtn);
     }
 
 }
+function renderDoctors(list) {
 
+    const table = document.getElementById("doctorTable");
+
+    table.innerHTML = "";
+
+    list.forEach((data) => {
+
+        const row = document.createElement("tr");
+
+        const tdID = document.createElement("td");
+        tdID.textContent = data.id;
+
+        const tdName = document.createElement("td");
+        tdName.textContent = data.doctorName;
+
+        const tdClinic = document.createElement("td");
+        tdClinic.textContent = data.clinicName;
+
+        const tdButton = document.createElement("td");
+
+        const btn = document.createElement("button");
+        btn.className = "btn btn-primary btn-sm";
+        btn.textContent = "Copy Link";
+        btn.onclick = () => copyLink(data.id);
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "btn btn-warning btn-sm ms-2";
+        editBtn.textContent = "Edit";
+        editBtn.onclick = () => {
+            window.location =
+                "edit-doctor.html?id=" + data.id;
+        };
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "btn btn-danger btn-sm ms-2";
+        deleteBtn.textContent = "Delete";
+
+        deleteBtn.onclick = async () => {
+
+            if (!confirm("هل أنت متأكد من حذف الطبيب؟"))
+                return;
+
+            await deleteDoc(doc(db, "doctors", data.id));
+
+            loadDoctors();
+
+        };
+
+        tdButton.appendChild(btn);
+        tdButton.appendChild(editBtn);
+        tdButton.appendChild(deleteBtn);
+
+        row.appendChild(tdID);
+        row.appendChild(tdName);
+        row.appendChild(tdClinic);
+        row.appendChild(tdButton);
+
+        table.appendChild(row);
+
+    });
+
+}
 async function copyLink(id) {
 
     const link =
@@ -240,6 +232,41 @@ document
         alert("حدث خطأ");
 
     }
+
+});
+document
+.getElementById("searchDoctor")
+.addEventListener("input", function () {
+
+    const search =
+        this.value.toLowerCase();
+
+    const filtered =
+        allDoctors.filter((data) => {
+
+            return (
+
+                (data.id || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (data.doctorName || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (data.clinicName || "")
+                .toLowerCase()
+                .includes(search)
+
+            );
+
+        });
+
+    renderDoctors(filtered);
 
 });
 loadDoctors();
