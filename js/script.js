@@ -4,7 +4,8 @@ import {
     doc,
     getDoc,
     addDoc,
-    collection
+    collection,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -57,7 +58,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
             phone: phone,
             xrays: xrays,
             notes: notes,
-            createdAt: new Date().toISOString() // تاريخ نصي قياسي مضاعف الدقة للترتيب
+            createdAt: serverTimestamp()
         });
 
         // 2. الإرسال إلى Google Sheet
