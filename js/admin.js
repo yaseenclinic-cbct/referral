@@ -27,6 +27,12 @@ async function loadDashboard() {
 );
 
 const referralsSnapshot = await getDocs(q);
+        referralsSnapshot.forEach((doc) => {
+    console.log(
+        doc.data().patientName,
+        doc.data().createdAt?.toDate?.()
+    );
+});
 
         document.getElementById("doctorCount").textContent = doctors.size;
         document.getElementById("clinicCount").textContent = clinics.size;
