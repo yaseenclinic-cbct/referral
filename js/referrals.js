@@ -4,7 +4,9 @@ import {
     collection,
     getDocs,
     deleteDoc,
-    doc
+    doc,
+    query,
+    orderBy
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 const referralModal = new bootstrap.Modal(
     document.getElementById("referralModal")
@@ -18,7 +20,12 @@ async function loadReferrals() {
 
     try {
 
-        const snapshot = await getDocs(collection(db, "referrals"));
+        const q = query(
+    collection(db, "referrals"),
+    orderBy("createdAt", "desc")
+);
+
+const snapshot = await getDocs(q);
         console.log("Referrals:", snapshot.size);
 allReferrals = [];
         snapshot.forEach((referral) => {
@@ -131,11 +138,9 @@ deleteBtn.textContent =
 };
         tdAction.appendChild(deleteBtn);
         tdDate.textContent =
-            data.createdAt
-            ? new Date(
-                data.createdAt.seconds * 1000
-              ).toLocaleString()
-            : "";
+    data.createdAt
+    ? data.createdAt.toDate().toLocaleString("ar-IQ")
+    : "";
 
         row.appendChild(tdDoctor);
         row.appendChild(tdClinic);
@@ -179,9 +184,8 @@ row.onclick = function () {
 
     document.getElementById("viewDate").textContent =
         data.createdAt
-        ? new Date(
-            data.createdAt.seconds * 1000
-          ).toLocaleString()
+        ? data.createdAt.toDate()
+          .toLocaleString()
         : "";
 
     referralModal.show();
