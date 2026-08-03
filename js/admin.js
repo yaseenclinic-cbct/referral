@@ -6,6 +6,7 @@ import {
     doc,
     setDoc,
     query,
+    orderBy,
     deleteDoc,
     where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
@@ -20,24 +21,27 @@ async function loadDashboard() {
     try {
         const doctors = await getDocs(collection(db, "doctors"));
         const clinics = await getDocs(collection(db, "clinics"));
-        const referralsSnapshot = await getDocs(collection(db, "referrals"));
+       const q = query(
+    collection(db, "referrals"),
+    orderBy("createdAt", "desc")
+);
+
+const referralsSnapshot = await getDocs(q);
 
         document.getElementById("doctorCount").textContent = doctors.size;
         document.getElementById("clinicCount").textContent = clinics.size;
         document.getElementById("referralCount").textContent = referralsSnapshot.size;
 
-        // مصفوفة لتجميع الإحالات وترتيبها برمجياً بدون تعقيدات Firestore
         let referralsList = [];
-        referralsSnapshot.forEach((doc) => {
-            referralsList.push({ id: doc.id, ...doc.data() });
-        });
 
-        // ترتيب من الأحدث إلى الأقدم
-        referralsList.sort((a, b) => {
-            const timeA = new Date(a.createdAt || 0).getTime();
-            const timeB = new Date(b.createdAt || 0).getTime();
-            return timeB - timeA;
-        });
+referralsSnapshot.forEach((doc) => {
+    referralsList.push({
+        id: doc.id,
+        ...doc.data()
+    });
+});
+
+renderReferrals(referralsList);
 
         renderReferrals(referralsList);
 
