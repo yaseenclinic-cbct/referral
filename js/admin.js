@@ -68,17 +68,19 @@ function renderReferrals(referrals) {
         }
 
         const row = document.createElement("tr");
-        row.innerHTML = 
-            <td>${data.doctorName || ""}</td>
-            <td>${data.clinicName || ""}</td>
-            <td>${data.patientName || ""}</td>
-            <td>${data.age || ""}</td>
-            <td>${data.gender || ""}</td>
-            <td>${data.phone || ""}</td>
-            <td>${Array.isArray(data.xrays) ? data.xrays.join(", ") : (data.xrays || "")}</td>
-            <td>${data.notes || ""}</td>
-            <td>${formattedDate}</td>
-        ;
+        row.innerHTML = `
+    <td>${data.doctorName || ""}</td>
+    <td>${data.clinicName || ""}</td>
+    <td>${data.patientName || ""}</td>
+    <td>${data.age || ""}</td>
+    <td>${data.gender || ""}</td>
+    <td>${data.phone || ""}</td>
+    <td>${Array.isArray(data.xrays)
+        ? data.xrays.join(", ")
+        : (data.xrays || "")}</td>
+    <td>${data.notes || ""}</td>
+    <td>${formattedDate}</td>
+`;
         tableBody.appendChild(row);
     });
 }
@@ -149,7 +151,7 @@ document.getElementById("addDoctorBtn")?.addEventListener("click", async () => {
             const data = clinic.data();
             const option = document.createElement("option");
             option.value = data.code;
-            option.textContent = ${data.name} (${data.code});
+            option.textContent = `${data.name} (${data.code})`;
             select.appendChild(option);
         });
 
