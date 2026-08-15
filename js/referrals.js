@@ -77,7 +77,10 @@ async function loadReferrals() {
 
     } catch (e) {
 
-        console.error(e);
+        console.error(
+            "Error loading referrals:",
+            e
+        );
 
     }
 
@@ -98,7 +101,6 @@ function renderReferrals(list) {
 
 
     list.forEach((data) => {
-
 
         const row =
             document.createElement("tr");
@@ -205,13 +207,25 @@ function renderReferrals(list) {
             document.createElement("td");
 
 
-        tdDate.textContent =
-            data.createdAt
-        ? data.createdAt
-                    .toDate()
-                    .toLocaleString("ar-IQ")
+        if (data.createdAt) {
 
-                : "";
+            try {
+                tdDate.textContent =
+                    data.createdAt
+                        .toDate()
+                        .toLocaleString("ar-IQ");
+
+            } catch (error) {
+
+                tdDate.textContent = "";
+
+            }
+
+        } else {
+
+            tdDate.textContent = "";
+
+        }
 
 
         // ========================================
@@ -238,11 +252,26 @@ function renderReferrals(list) {
             data.dateOfCBCT || "";
 
 
+        // مهم:
+        // منع فتح نافذة تفاصيل الإحالة
+        // عند الضغط على التاريخ
+
+        cbctDateInput.addEventListener(
+            "click",
+            function (e) {
+
+                e.stopPropagation();
+
+            }
+        );
+
+
         cbctDateInput.addEventListener(
             "change",
             async function (e) {
 
                 e.stopPropagation();
+
 
                 await updateReferralField(
                     data,
@@ -291,11 +320,26 @@ function renderReferrals(list) {
             data.cbctPrice ?? "";
 
 
+        // مهم:
+        // منع فتح نافذة تفاصيل الإحالة
+        // عند الضغط على السعر
+
+        priceInput.addEventListener(
+            "click",
+            function (e) {
+
+                e.stopPropagation();
+
+            }
+        );
+
+
         priceInput.addEventListener(
             "change",
             async function (e) {
 
                 e.stopPropagation();
+
 
                 await updateReferralField(
                     data,
@@ -344,11 +388,26 @@ function renderReferrals(list) {
             data.done === true;
 
 
+        // مهم:
+        // منع فتح نافذة تفاصيل الإحالة
+        // عند الضغط على Checkbox
+
+        doneCheckbox.addEventListener(
+            "click",
+            function (e) {
+
+                e.stopPropagation();
+
+            }
+        );
+
+
         doneCheckbox.addEventListener(
             "change",
             async function (e) {
 
                 e.stopPropagation();
+
 
                 await updateReferralField(
                     data,
@@ -375,8 +434,6 @@ function renderReferrals(list) {
 
         const deleteBtn =
             document.createElement("button");
-
-
         deleteBtn.className =
             "btn btn-danger btn-sm";
 
@@ -385,7 +442,8 @@ function renderReferrals(list) {
             "Delete";
 
 
-        deleteBtn.onclick =
+        deleteBtn.addEventListener(
+            "click",
             async function (e) {
 
                 e.stopPropagation();
@@ -402,45 +460,103 @@ function renderReferrals(list) {
                 }
 
 
-                await deleteDoc(
-                    doc(
-                        db,
-                        "referrals",
-                        data.docId
-                    )
-                );
+                try {
+
+                    await deleteDoc(
+                        doc(
+                            db,
+                            "referrals",
+                            data.docId
+                        )
+                    );
 
 
-                alert(
-                    "تم حذف الإحالة"
-                );
+                    alert(
+                        "تم حذف الإحالة"
+                    );
 
 
-                loadReferrals();
+                    loadReferrals();
 
-            };
+
+                } catch (error) {
+
+                    console.error(
+                        "Delete error:",
+                        error
+                    );
+
+
+                    alert(
+                        "حدث خطأ أثناء حذف الإحالة"
+                    );
+
+                }
+
+            }
+        );
 
 
         tdAction.appendChild(
             deleteBtn
         );
+
+
         // ========================================
-        // Append columns
+        // Append all columns
         // ========================================
 
-        row.appendChild(tdDoctor);
-        row.appendChild(tdClinic);
-        row.appendChild(tdPatient);
-        row.appendChild(tdAge);
-        row.appendChild(tdPhone);
-        row.appendChild(tdGender);
-        row.appendChild(tdXrays);
-        row.appendChild(tdNotes);
-        row.appendChild(tdDate);
-        row.appendChild(tdCBCTDate);
-        row.appendChild(tdPrice);
-        row.appendChild(tdDone);
-        row.appendChild(tdAction);
+        row.appendChild(
+            tdDoctor
+        );
+
+        row.appendChild(
+            tdClinic
+        );
+
+        row.appendChild(
+            tdPatient
+        );
+
+        row.appendChild(
+            tdAge
+        );
+
+        row.appendChild(
+            tdPhone
+        );
+
+        row.appendChild(
+            tdGender
+        );
+
+        row.appendChild(
+            tdXrays
+        );
+
+        row.appendChild(
+            tdNotes
+        );
+
+        row.appendChild(
+            tdDate
+        );
+
+        row.appendChild(
+            tdCBCTDate
+        );
+
+        row.appendChild(
+            tdPrice
+        );
+
+        row.appendChild(
+            tdDone
+        );
+
+        row.appendChild(
+            tdAction
+        );
 
 
         // ========================================
@@ -451,7 +567,8 @@ function renderReferrals(list) {
             "pointer";
 
 
-        row.onclick =
+        row.addEventListener(
+            "click",
             function () {
 
                 document
@@ -515,8 +632,6 @@ function renderReferrals(list) {
                         ? data.xrays.join(", ")
 
                         : data.xrays || "";
-
-
                 document
                     .getElementById(
                         "viewNotes"
@@ -544,10 +659,13 @@ function renderReferrals(list) {
 
                 referralModal.show();
 
-            };
+            }
+        );
 
 
-        table.appendChild(row);
+        table.appendChild(
+            row
+        );
 
     });
 
@@ -566,7 +684,9 @@ async function updateReferralField(
 
     try {
 
-        // 1. Firebase
+        // ========================================
+        // Firebase
+        // ========================================
 
         await updateDoc(
             doc(
@@ -581,10 +701,14 @@ async function updateReferralField(
 
 
         // تحديث البيانات المحلية
-        data[field] = value;
+
+        data[field] =
+            value;
 
 
-        // 2. Google Sheet
+        // ========================================
+        // Google Sheet
+        // ========================================
 
         if (data.referralID) {
 
@@ -608,6 +732,8 @@ async function updateReferralField(
                 "dateOfCBCT",
                 data.dateOfCBCT || ""
             );
+
+
             formData.append(
                 "cbctPrice",
                 data.cbctPrice ?? ""
@@ -626,16 +752,21 @@ async function updateReferralField(
                 GOOGLE_SCRIPT_URL,
                 {
 
-                    method: "POST",
+                    method:
+                        "POST",
 
-                    mode: "no-cors",
+                    mode:
+                        "no-cors",
 
                     headers: {
+
                         "Content-Type":
                             "application/x-www-form-urlencoded"
+
                     },
 
-                    body: formData
+                    body:
+                        formData
 
                 }
             );
@@ -672,7 +803,9 @@ async function updateReferralField(
 // ========================================
 
 document
-    .getElementById("searchReferral")
+    .getElementById(
+        "searchReferral"
+    )
     .addEventListener(
         "input",
         function () {
@@ -689,7 +822,8 @@ document
                         return (
 
                             (
-                                data.doctorName || ""
+                                data.doctorName ||
+                                ""
                             )
                                 .toLowerCase()
                                 .includes(search)
@@ -697,7 +831,16 @@ document
                             ||
 
                             (
-                                data.clinicName || ""
+                                data.clinicName ||
+                                ""
+                            )
+                                .toLowerCase()
+                                .includes(search)
+
+                            ||
+                            (
+                                data.patientName ||
+                                ""
                             )
                                 .toLowerCase()
                                 .includes(search)
@@ -705,15 +848,8 @@ document
                             ||
 
                             (
-                                data.patientName || ""
-                            )
-                                .toLowerCase()
-                                .includes(search)
-
-                            ||
-
-                            (
-                                data.phone || ""
+                                data.phone ||
+                                ""
                             )
                                 .toLowerCase()
                                 .includes(search)
@@ -731,5 +867,9 @@ document
         }
     );
 
+
+// ========================================
+// Start
+// ========================================
 
 loadReferrals();
