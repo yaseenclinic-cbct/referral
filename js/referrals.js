@@ -2,7 +2,7 @@ import { db } from "./firebase.js";
 
 import {
     collection,
-    getDocs,
+    onSnapshot,
     deleteDoc,
     doc,
     query,
@@ -25,10 +25,10 @@ let allReferrals = [];
 
 
 // ========================================
-// Load Referrals
+// Real-time Referrals Listener
 // ========================================
 
-async function loadReferrals() {
+function loadReferrals() {
 
     const table =
         document.getElementById("referralTable");
@@ -36,53 +36,54 @@ async function loadReferrals() {
     table.innerHTML = "";
 
 
-    try {
-
-        const q = query(
-            collection(db, "referrals"),
-            orderBy("createdAt", "desc")
-        );
+    const q = query(
+        collection(db, "referrals"),
+        orderBy("createdAt", "desc")
+    );
 
 
-        const snapshot =
-            await getDocs(q);
+    onSnapshot(
+        q,
+
+        (snapshot) => {
+
+            console.log(
+                "Referrals:",
+                snapshot.size
+            );
 
 
-        console.log(
-            "Referrals:",
-            snapshot.size
-        );
+            allReferrals = [];
 
 
-        allReferrals = [];
+            snapshot.forEach((referral) => {
 
+                allReferrals.push({
 
-        snapshot.forEach((referral) => {
+                    docId: referral.id,
 
-            allReferrals.push({
+                    ...referral.data()
 
-                docId: referral.id,
-
-                ...referral.data()
+                });
 
             });
 
-        });
 
+            renderReferrals(
+                allReferrals
+            );
 
-        renderReferrals(
-            allReferrals
-        );
+        },
 
+        (error) => {
 
-    } catch (e) {
+            console.error(
+                "Error listening to referrals:",
+                error
+            );
 
-        console.error(
-            "Error loading referrals:",
-            e
-        );
-
-    }
+        }
+    );
 
 }
 
@@ -202,14 +203,14 @@ function renderReferrals(list) {
         // ========================================
         // Created Date
         // ========================================
-
-        const tdDate =
+                 const tdDate =
             document.createElement("td");
 
 
         if (data.createdAt) {
 
             try {
+
                 tdDate.textContent =
                     data.createdAt
                         .toDate()
@@ -251,10 +252,6 @@ function renderReferrals(list) {
         cbctDateInput.value =
             data.dateOfCBCT || "";
 
-
-        // مهم:
-        // منع فتح نافذة تفاصيل الإحالة
-        // عند الضغط على التاريخ
 
         cbctDateInput.addEventListener(
             "click",
@@ -320,10 +317,6 @@ function renderReferrals(list) {
             data.cbctPrice ?? "";
 
 
-        // مهم:
-        // منع فتح نافذة تفاصيل الإحالة
-        // عند الضغط على السعر
-
         priceInput.addEventListener(
             "click",
             function (e) {
@@ -388,10 +381,6 @@ function renderReferrals(list) {
             data.done === true;
 
 
-        // مهم:
-        // منع فتح نافذة تفاصيل الإحالة
-        // عند الضغط على Checkbox
-
         doneCheckbox.addEventListener(
             "click",
             function (e) {
@@ -434,14 +423,14 @@ function renderReferrals(list) {
 
         const deleteBtn =
             document.createElement("button");
+
+
         deleteBtn.className =
             "btn btn-danger btn-sm";
 
 
         deleteBtn.textContent =
             "Delete";
-
-
         deleteBtn.addEventListener(
             "click",
             async function (e) {
@@ -476,9 +465,6 @@ function renderReferrals(list) {
                     );
 
 
-                    loadReferrals();
-
-
                 } catch (error) {
 
                     console.error(
@@ -503,64 +489,38 @@ function renderReferrals(list) {
 
 
         // ========================================
-        // Append all columns
+        // Append Columns
         // ========================================
 
-        row.appendChild(
-            tdDoctor
-        );
+        row.appendChild(tdDoctor);
 
-        row.appendChild(
-            tdClinic
-        );
+        row.appendChild(tdClinic);
 
-        row.appendChild(
-            tdPatient
-        );
+        row.appendChild(tdPatient);
 
-        row.appendChild(
-            tdAge
-        );
+        row.appendChild(tdAge);
 
-        row.appendChild(
-            tdPhone
-        );
+        row.appendChild(tdPhone);
 
-        row.appendChild(
-            tdGender
-        );
+        row.appendChild(tdGender);
 
-        row.appendChild(
-            tdXrays
-        );
+        row.appendChild(tdXrays);
 
-        row.appendChild(
-            tdNotes
-        );
+        row.appendChild(tdNotes);
 
-        row.appendChild(
-            tdDate
-        );
+        row.appendChild(tdDate);
 
-        row.appendChild(
-            tdCBCTDate
-        );
+        row.appendChild(tdCBCTDate);
 
-        row.appendChild(
-            tdPrice
-        );
+        row.appendChild(tdPrice);
 
-        row.appendChild(
-            tdDone
-        );
+        row.appendChild(tdDone);
 
-        row.appendChild(
-            tdAction
-        );
+        row.appendChild(tdAction);
 
 
         // ========================================
-        // Row click
+        // Row Click
         // ========================================
 
         row.style.cursor =
@@ -632,6 +592,8 @@ function renderReferrals(list) {
                         ? data.xrays.join(", ")
 
                         : data.xrays || "";
+
+
                 document
                     .getElementById(
                         "viewNotes"
@@ -655,8 +617,6 @@ function renderReferrals(list) {
                             )
 
                         : "";
-
-
                 referralModal.show();
 
             }
@@ -699,8 +659,6 @@ async function updateReferralField(
             }
         );
 
-
-        // تحديث البيانات المحلية
 
         data[field] =
             value;
@@ -838,6 +796,7 @@ document
                                 .includes(search)
 
                             ||
+
                             (
                                 data.patientName ||
                                 ""
