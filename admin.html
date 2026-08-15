@@ -311,6 +311,127 @@
 
 
 
+<script>
+    const ADMIN_USERNAME = "admin";
+    const ADMIN_PASSWORD = "yrms2026";
+
+    const loginScreen =
+        document.getElementById("loginScreen");
+
+    const adminContent =
+        document.getElementById("adminContent");
+
+    const loginBtn =
+        document.getElementById("loginBtn");
+
+    const logoutBtn =
+        document.getElementById("logoutBtn");
+
+    const usernameInput =
+        document.getElementById("adminUsername");
+
+    const passwordInput =
+        document.getElementById("adminPassword");
+
+    const loginError =
+        document.getElementById("loginError");
+
+
+    function showLogin() {
+
+        loginScreen.style.display = "flex";
+
+        adminContent.style.display = "none";
+
+    }
+
+
+    function showAdmin() {
+
+        loginScreen.style.display = "none";
+
+        adminContent.style.display = "block";
+
+    }
+
+
+    loginBtn.addEventListener("click", function () {
+
+        const username =
+            usernameInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+
+        if (
+            username === ADMIN_USERNAME &&
+            password === ADMIN_PASSWORD
+        ) {
+
+            sessionStorage.setItem(
+                "yrmsAdminLoggedIn",
+                "true"
+            );
+
+            loginError.style.display = "none";
+
+            showAdmin();
+
+        } else {
+
+            loginError.style.display = "block";
+
+        }
+
+    });
+
+
+    passwordInput.addEventListener(
+        "keydown",
+        function (e) {
+
+            if (e.key === "Enter") {
+
+                loginBtn.click();
+
+            }
+
+        }
+    );
+
+
+    logoutBtn.addEventListener(
+        "click",
+        function () {
+
+            sessionStorage.removeItem(
+                "yrmsAdminLoggedIn"
+            );
+
+            showLogin();
+
+        }
+    );
+
+
+    if (
+        sessionStorage.getItem(
+            "yrmsAdminLoggedIn"
+        ) === "true"
+    ) {
+
+        showAdmin();
+
+    } else {
+
+        showLogin();
+
+    }
+
+</script>
+
+
 <script
     type="module"
     src="js/admin.js">
