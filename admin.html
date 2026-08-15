@@ -200,74 +200,118 @@
     </div>
 
 
+<!-- =========================
+     Dashboard Cards
+========================= -->
 
-    <!-- =========================
-         Dashboard Cards
-    ========================= -->
+<div class="row g-3">
 
-    <div class="row g-3">
+    <!-- Doctors -->
 
+    <div class="col-md-3">
 
-        <div class="col-md-3">
+        <div class="card dashboard-card">
 
-            <div class="card dashboard-card">
+            <h3 id="doctorCount">
+                0
+            </h3>
 
-                <h3 id="doctorCount">
-                    0
-                </h3>
-
-                <p>
-                    عدد الأطباء
-                </p>
-
-            </div>
+            <p>
+                عدد الأطباء
+            </p>
 
         </div>
-
-
-
-        <div class="col-md-3">
-
-            <div class="card dashboard-card">
-
-                <h3 id="clinicCount">
-                    0
-                </h3>
-
-                <p>
-                    عدد العيادات
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="col-md-3">
-
-            <div class="card dashboard-card">
-                <h3 id="referralCount">
-                    0
-                </h3>
-
-                <p>
-                    الإحالات
-                </p>
-
-            </div>
-
-        </div>
-
 
     </div>
 
 
+    <!-- Clinics -->
 
-    <hr class="my-5">
+    <div class="col-md-3">
+
+        <div class="card dashboard-card">
+
+            <h3 id="clinicCount">
+                0
+            </h3>
+
+            <p>
+                عدد العيادات
+            </p>
+
+        </div>
+
+    </div>
 
 
+    <!-- Total Referrals -->
 
+    <div class="col-md-3">
+
+        <div class="card dashboard-card">
+
+            <h3 id="referralCount">
+                0
+            </h3>
+
+            <p>
+                الإحالات
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Monthly Referrals -->
+
+    <div class="col-md-3">
+
+        <div class="card dashboard-card">
+
+            <h3 id="monthlyReferralCount">
+                0
+            </h3>
+
+            <p>
+                إحالات هذا الشهر
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     Month Selector
+========================= -->
+
+<div class="row mt-4">
+
+    <div class="col-md-4">
+
+        <label
+            for="monthSelector"
+            class="form-label">
+
+            اختر الشهر
+
+        </label>
+
+        <select
+            id="monthSelector"
+            class="form-select">
+
+        </select>
+
+    </div>
+
+</div>
+
+
+<hr class="my-5">
     <!-- =========================
          Navigation
     ========================= -->
