@@ -225,7 +225,7 @@ function setupMonthSelector(referrals) {
                     "0"
                 );
             months.add(
-                ${year}-${month}
+                `${year}-${month}`
             );
 
         }
@@ -342,12 +342,12 @@ function setupMonthSelector(referrals) {
 
 
     const currentMonth =
-        ${now.getFullYear()}-${String(
+        `${now.getFullYear()}-${String(
             now.getMonth() + 1
         ).padStart(
             2,
             "0"
-        )};
+        )}`;
 
 
     if (
@@ -443,7 +443,7 @@ function updateMonthlyReferralCount(
 
 
                 const referralMonth =
-                    ${year}-${month};
+                    `${year}-${month}`;
 
 
                 return (
