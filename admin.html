@@ -312,50 +312,65 @@
 
 
 <script>
-    const ADMIN_USERNAME = "admin";
-    const ADMIN_PASSWORD = "yrms2026";
-
-    const loginScreen =
-        document.getElementById("loginScreen");
-
-    const adminContent =
-        document.getElementById("adminContent");
-
-    const loginBtn =
-        document.getElementById("loginBtn");
-
-    const logoutBtn =
-        document.getElementById("logoutBtn");
-
-    const usernameInput =
-        document.getElementById("adminUsername");
-
-    const passwordInput =
-        document.getElementById("adminPassword");
-
-    const loginError =
-        document.getElementById("loginError");
+   const LOGIN_API =
+    "https://script.google.com/macros/s/AKfycbwl_YFz58K6Cu1238_fbS4UoQkp5JIhpq9x7lLhWw0jdibnjf-obpgb-V9MPtuK7fg/exec";
 
 
-    function showLogin() {
+const loginScreen =
+    document.getElementById("loginScreen");
 
-        loginScreen.style.display = "flex";
+const adminContent =
+    document.getElementById("adminContent");
 
-        adminContent.style.display = "none";
+const loginBtn =
+    document.getElementById("loginBtn");
 
-    }
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+const usernameInput =
+    document.getElementById("adminUsername");
+
+const passwordInput =
+    document.getElementById("adminPassword");
+
+const loginError =
+    document.getElementById("loginError");
 
 
-    function showAdmin() {
+// ==========================================
+// SHOW LOGIN
+// ==========================================
 
-        loginScreen.style.display = "none";
+function showLogin() {
 
-        adminContent.style.display = "block";
+    loginScreen.style.display = "flex";
 
-    }
+    adminContent.style.display = "none";
+
+}
 
 
-    loginBtn.addEventListener("click", function () {
+// ==========================================
+// SHOW ADMIN
+// ==========================================
+
+function showAdmin() {
+
+    loginScreen.style.display = "none";
+
+    adminContent.style.display = "block";
+
+}
+
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+loginBtn.addEventListener(
+    "click",
+    async function () {
 
         const username =
             usernameInput.value.trim();
@@ -364,71 +379,154 @@
             passwordInput.value;
 
 
-        if (
-            username === ADMIN_USERNAME &&
-            password === ADMIN_PASSWORD
-        ) {
+        if (!username || !password) {
 
-            sessionStorage.setItem(
-                "yrmsAdminLoggedIn",
-                "true"
-            );
+            loginError.textContent =
+                "أدخل اسم المستخدم وكلمة المرور";
 
-            loginError.style.display = "none";
+            loginError.style.display =
+                "block";
 
-            showAdmin();
-
-        } else {
-
-            loginError.style.display = "block";
+            return;
 
         }
 
-    });
+
+        loginBtn.disabled = true;
+
+        loginBtn.textContent =
+            "جاري التحقق...";
 
 
-    passwordInput.addEventListener(
-        "keydown",
-        function (e) {
+        try {
 
-            if (e.key === "Enter") {
+            const url =
+                LOGIN_API +
+                "?action=login" +
+                "&username=" +
+                encodeURIComponent(username) +
+                "&password=" +
+                encodeURIComponent(password);
 
-                loginBtn.click();
+
+            const response =
+                await fetch(url);
+
+
+            const result =
+                await response.json();
+
+
+            if (result.success) {
+
+                sessionStorage.setItem(
+                    "yrmsAdminLoggedIn",
+                    "true"
+                );
+
+
+                loginError.style.display =
+                    "none";
+
+
+                usernameInput.value = "";
+
+                passwordInput.value = "";
+
+
+                showAdmin();
+
+
+            } else {
+
+                loginError.textContent =
+                    "اسم المستخدم أو كلمة المرور غير صحيحة";
+
+                loginError.style.display =
+                    "block";
 
             }
 
-        }
-    );
 
+        } catch (error) {
 
-    logoutBtn.addEventListener(
-        "click",
-        function () {
-
-            sessionStorage.removeItem(
-                "yrmsAdminLoggedIn"
+            console.error(
+                "Login error:",
+                error
             );
 
-            showLogin();
+
+            loginError.textContent =
+                "تعذر الاتصال بخادم تسجيل الدخول";
+
+            loginError.style.display =
+                "block";
 
         }
-    );
 
 
-    if (
-        sessionStorage.getItem(
+        loginBtn.disabled = false;
+
+        loginBtn.textContent =
+            "دخول";
+
+    }
+);
+
+
+// ==========================================
+// ENTER KEY
+// ==========================================
+
+passwordInput.addEventListener(
+    "keydown",
+    function (e) {
+
+        if (e.key === "Enter") {
+
+            loginBtn.click();
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+logoutBtn.addEventListener(
+    "click",
+    function () {
+
+        sessionStorage.removeItem(
             "yrmsAdminLoggedIn"
-        ) === "true"
-    ) {
-
-        showAdmin();
-
-    } else {
+        );
 
         showLogin();
 
     }
+);
 
+
+// ==========================================
+// CHECK SESSION
+// ==========================================
+
+if (
+    sessionStorage.getItem(
+        "yrmsAdminLoggedIn"
+    ) === "true"
+) {
+
+    showAdmin();
+
+} else {
+
+    showLogin();
+
+}
 </script>
 
 
