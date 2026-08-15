@@ -3,88 +3,319 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
 
-<title>YRMS Admin</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <title>YRMS Admin</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css"
+        rel="stylesheet">
 
-<link rel="stylesheet" href="css/admin.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css">
+
+    <style>
+
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* =========================
+           Login
+        ========================= */
+
+        #loginScreen {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+        }
+
+        .login-card {
+
+            width: 100%;
+
+            max-width: 420px;
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 10px 35px rgba(0,0,0,0.10);
+
+            background: white;
+
+        }
+
+        .login-title {
+
+            font-weight: 800;
+
+            margin-bottom: 25px;
+
+            text-align: center;
+
+        }
+
+        #loginError {
+
+            display: none;
+
+        }
+
+        /* =========================
+           Admin
+        ========================= */
+
+        #adminContent {
+
+            display: none;
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<div class="container py-4">
 
-    <h2 class="mb-4">
-        لوحة الإدارة
-    </h2>
+<!-- ==========================================
+     LOGIN SCREEN
+========================================== -->
 
-    <div class="row g-3">
+<div id="loginScreen">
 
-        <div class="col-md-3">
+    <div class="login-card">
 
-            <div class="card dashboard-card">
+        <h3 class="login-title">
+            🔐 لوحة إدارة YRMS
+        </h3>
 
-                <h3 id="doctorCount">0</h3>
 
-                <p>عدد الأطباء</p>
+        <div class="mb-3">
 
-            </div>
+            <label
+                for="adminUsername"
+                class="form-label">
 
-        </div>
+                اسم المستخدم
 
-        <div class="col-md-3">
+            </label>
 
-            <div class="card dashboard-card">
-
-                <h3 id="clinicCount">0</h3>
-
-                <p>عدد العيادات</p>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card dashboard-card">
-
-                <h3 id="referralCount">0</h3>
-
-                <p>الإحالات</p>
-
-            </div>
+            <input
+                type="text"
+                id="adminUsername"
+                class="form-control"
+                placeholder="Username"
+                autocomplete="username">
 
         </div>
 
-    </div>
 
-    <hr class="my-5">
+        <div class="mb-3">
 
-    <div class="d-grid gap-3">
+            <label
+                for="adminPassword"
+                class="form-label">
 
-        <a href="doctors.html" class="btn btn-dark btn-lg">
-            👨‍⚕️ الأطباء
-        </a>
+                كلمة المرور
 
-        <a href="clinics.html" class="btn btn-warning btn-lg">
-            🏥 العيادات
-        </a>
+            </label>
 
-        <a href="referrals.html" class="btn btn-outline-dark btn-lg">
-            📋 الإحالات
-        </a>
+            <input
+                type="password"
+                id="adminPassword"
+                class="form-control"
+                placeholder="Password"
+                autocomplete="current-password">
+
+        </div>
+
+
+        <div
+            id="loginError"
+            class="alert alert-danger text-center">
+
+            اسم المستخدم أو كلمة المرور غير صحيحة
+
+        </div>
+
+
+        <button
+            id="loginBtn"
+            class="btn btn-dark w-100">
+
+            دخول
+
+        </button>
 
     </div>
 
 </div>
 
-<script type="module" src="js/admin.js"></script>
+
+
+<!-- ==========================================
+     ADMIN CONTENT
+========================================== -->
+
+<div
+    id="adminContent"
+    class="container py-4">
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="mb-0">
+            لوحة الإدارة
+        </h2>
+
+
+        <button
+            id="logoutBtn"
+            class="btn btn-outline-danger">
+
+            تسجيل الخروج
+
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================
+         Dashboard Cards
+    ========================= -->
+
+    <div class="row g-3">
+
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card">
+
+                <h3 id="doctorCount">
+                    0
+                </h3>
+
+                <p>
+                    عدد الأطباء
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card">
+
+                <h3 id="clinicCount">
+                    0
+                </h3>
+
+                <p>
+                    عدد العيادات
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card">
+                <h3 id="referralCount">
+                    0
+                </h3>
+
+                <p>
+                    الإحالات
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <hr class="my-5">
+
+
+
+    <!-- =========================
+         Navigation
+    ========================= -->
+
+    <div class="d-grid gap-3">
+
+
+        <a
+            href="doctors.html"
+            class="btn btn-dark btn-lg">
+
+            👨‍⚕️ الأطباء
+
+        </a>
+
+
+
+        <a
+            href="clinics.html"
+            class="btn btn-warning btn-lg">
+
+            🏥 العيادات
+
+        </a>
+
+
+
+        <a
+            href="referrals.html"
+            class="btn btn-outline-dark btn-lg">
+
+            📋 الإحالات
+
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script
+    type="module"
+    src="js/admin.js">
+</script>
+
 
 </body>
 
