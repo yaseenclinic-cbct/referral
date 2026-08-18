@@ -432,55 +432,143 @@ function renderReferrals(list) {
         deleteBtn.textContent =
             "Delete";
         deleteBtn.addEventListener(
-            "click",
-            async function (e) {
+    "click",
+    async function (e) {
 
-                e.stopPropagation();
-
-
-                const ok =
-                    confirm(
-                        "هل أنت متأكد من حذف هذه الإحالة؟"
-                    );
+        e.stopPropagation();
 
 
-                if (!ok) {
-                    return;
-                }
+        const ok =
+            confirm(
+                "هل أنت متأكد من حذف هذه الإحالة؟\n\n" +
+                "سيتم حذفها من Firebase و Google Sheet."
+            );
 
 
-                try {
-
-                    await deleteDoc(
-                        doc(
-                            db,
-                            "referrals",
-                            data.docId
-                        )
-                    );
+        if (!ok) {
+            return;
+        }
 
 
-                    alert(
-                        "تم حذف الإحالة"
-                    );
+        try {
+
+            // ========================================
+            // 1. Delete from Firebase
+            // ========================================
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "referrals",
+                    data.docId
+                )
+            );
 
 
-                } catch (error) {
+            // ========================================
+            // 2. Delete from Google Sheet
+            // ========================================
 
-                    console.error(
-                        "Delete error:",
-                        error
-                    );
+            const formData =
+                new URLSearchParams();
 
 
-                    alert(
-                        "حدث خطأ أثناء حذف الإحالة"
-                    );
+            formData.append(
+                "action",
+                "deleteReferral"
+            );
 
-                }
+
+            formData.append(
+                "referralID",
+                data.referralID || ""
+            );
+
+
+            const response =
+                await fetch(
+                    GOOGLE_SCRIPT_URL,
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+
+                        },
+
+                        body:
+                            formData.toString()
+
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            // ========================================
+            // 3. Check Google Sheet
+            // ========================================
+
+            if (!result.success) {
+
+                console.error(
+                    "Google Sheet delete failed:",
+                    result
+                );
+
+
+                alert(
+                    "⚠️ تم حذف الإحالة من Firebase، " +
+                    "لكن لم يتم حذفها من Google Sheet.\n\n" +
+                    "Referral ID: " +
+                    (data.referralID || "")
+                );
+
+
+                await loadReferrals();
+
+                return;
 
             }
-        );
+
+
+            // ========================================
+            // 4. Success
+            // ========================================
+
+            alert(
+                "✅ تم حذف الإحالة بنجاح من Firebase و Google Sheet"
+            );
+
+
+            // تحديث القائمة مباشرة
+
+            await loadReferrals();
+
+
+        } catch (error) {
+
+            console.error(
+                "Delete error:",
+                error
+            );
+
+
+            alert(
+                "❌ حدث خطأ أثناء حذف الإحالة:\n\n" +
+                error.message
+            );
+
+        }
+
+    }
+);
 
 
         tdAction.appendChild(
