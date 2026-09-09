@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Yaseen Referral System</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+
+        /* ========================================
+           CBCT Tooth Chart
+        ======================================== */
+
+        #toothChartContainer {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .tooth-chart {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 18px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+
+        .tooth-chart-title {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .tooth-chart-help {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .dental-chart {
+            min-width: 720px;
+            direction: ltr;
+        }
+
+        .dental-row-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            position: relative;
+        }
+
+        .quadrant {
+            min-width: 0;
+            padding: 8px;
+        }
+
+        .quadrant-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #777;
+            margin-bottom: 7px;
+        }
+
+        .dental-half {
+            display: flex;
+            gap: 5px;
+            direction: ltr;
+        }
+
+        /* Keep 11/21/41/31 closest to the center line. */
+        #upperRight,
+        #lowerRight {
+            flex-direction: row-reverse;
+        }
+
+        #upperLeft,
+        #lowerLeft {
+            flex-direction: row;
+        }
+
+        .dental-chart::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 48px;
+            bottom: 48px;
+            width: 2px;
+            background: #d6d6d6;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dental-chart::after {
+            content: "";
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            top: 50%;
+            height: 2px;
+            background: #d6d6d6;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .quadrant {
+            position: relative;
+            z-index: 1;
+        }
+
+        .tooth-item {
+            flex: 1 1 0;
+            min-width: 0;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 10px;
+            padding: 6px 2px;
+            cursor: pointer;
+            text-align: center;
+            transition: .15s ease;
+            user-select: none;
+        }
+
+        .tooth-item:hover {
+            border-color: #f0ad00;
+            transform: translateY(-2px);
+        }
+
+        .tooth-item.selected {
+            background: #FFD400;
+            border-color: #e0a800;
+            box-shadow: 0 3px 8px rgba(0,0,0,.12);
+        }
+
+        .tooth-icon {
+            font-size: 23px;
+            line-height: 25px;
+            display: block;
+        }
+
+        .tooth-number {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 3px;
+            direction: ltr;
+        }
+
+        .selected-teeth-box {
+            margin-top: 15px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            background: #fff8df;
+            border: 1px solid #ffe08a;
+            text-align: center;
+        }
+
+        .selected-teeth-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #selectedTeethText {
+            font-weight: 700;
+            direction: ltr;
+            unicode-bidi: isolate;
+        }
+
+        @media (max-width: 600px) {
+            .dental-chart {
+                min-width: 650px;
+            }
+
+            .tooth-chart {
+                padding: 10px;
+            }
+
+            .tooth-item {
+                border-radius: 8px;
+                padding: 5px 1px;
+            }
+
+            .tooth-icon {
+                font-size: 20px;
+            }
+
+            .tooth-number {
+                font-size: 12px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container py-4">
+
+
+    <!-- ========================================
+         Header
+    ======================================== -->
+
+    <header class="text-center mb-4">
+
+        <img
+            src="assets/logo/logo.png"
+            class="logo"
+            alt="Yaseen Logo">
+
+        <h1 class="system-title">
+            Yaseen Referral System
+        </h1>
+
+        <p class="system-subtitle">
+            نظام إحالة المرضى
+        </p>
+
+    </header>
+
+
+    <!-- ========================================
+         Doctor Card
+    ======================================== -->
+
+    <section class="card card-custom mb-4">
+
+        <div class="card-body">
+
+            <span class="section-label">
+                الطبيب المحول
+            </span>
+
+            <h3 id="doctorName">
+                جاري تحميل البيانات...
+            </h3>
+
+            <p id="clinicName">
+                ...
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================
+         Patient Information
+    ======================================== -->
+
+    <section class="card card-custom mb-4">
+
+        <div class="card-body">
+
+            <h4 class="section-title">
+                بيانات المراجع
+            </h4>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    الاسم الثلاثي *
+                </label>
+
+                <input
+                    id="patientName"
+                    type="text"
+                    class="form-control">
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-6">
+
+                    <label class="form-label">
+                        العمر
+                    </label>
+
+                    <input
+                        id="patientAge"
+                        type="number"
+                        class="form-control">
+
+                </div>
+
+
+                <div class="col-6">
+
+                    <label class="form-label">
+                        رقم الهاتف *
+                    </label>
+
+                    <input
+                        id="patientPhone"
+                        type="tel"
+                        class="form-control">
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-4">
+
+                <label class="form-label">
+                    الجنس
+                </label>
+
+                <div class="gender-box">
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="gender"
+                            value="ذكر">
+
+                        ذكر
+
+                    </label>
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="gender"
+                            value="أنثى">
+
+                        أنثى
+
+                    </label>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================
+         X-Ray Types
+    ======================================== -->
+
+    <section class="card card-custom mb-4">
+
+        <div class="card-body">
+
+            <h4 class="section-title">
+                أنواع الأشعة
+            </h4>
+
+
+            <div class="row">
+
+
+                <!-- CBCT Tooth -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            id="cbctTooth"
+                            value="CBCT Tooth">
+
+                        <span class="form-check-label">
+                            CBCT Tooth
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- CBCT Teeth -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="CBCT Teeth">
+
+                        <span class="form-check-label">
+                            CBCT Teeth
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- CBCT Jaw -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="CBCT Jaw">
+
+                        <span class="form-check-label">
+                            CBCT Jaw
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- CBCT Full Mouth -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="CBCT Full Mouth">
+
+                        <span class="form-check-label">
+                            CBCT Full Mouth
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- OPG -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="OPG">
+
+                        <span class="form-check-label">
+                            OPG
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Cephalometric -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="Cephalometric">
+
+                        <span class="form-check-label">
+                            Cephalometric
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- 3D Proface -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="3D Proface">
+
+                        <span class="form-check-label">
+                            3D Proface
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Surgical Guide -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="Surgical Guide">
+
+                        <span class="form-check-label">
+                            Surgical Guide
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Report -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="Report">
+
+                        <span class="form-check-label">
+                            Report
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Ceph Analysis -->
+
+                <div class="col-6 mb-2">
+
+                    <label class="form-check">
+                        <input
+                            class="form-check-input xray-option"
+                            type="checkbox"
+                            value="Ceph Analysis">
+
+                        <span class="form-check-label">
+                            Ceph Analysis
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ========================================
+                 CBCT Tooth Chart
+            ======================================== -->
+
+            <div id="toothChartContainer">
+
+                <div class="tooth-chart">
+
+                    <div class="tooth-chart-title">
+                        اختر الأسنان المطلوبة لـ CBCT Tooth
+                    </div>
+                    <div class="tooth-chart-help">
+                        اضغط على السن لتحديده، واضغط مرة ثانية لإلغاء التحديد
+                    </div>
+
+
+                    <div class="dental-chart">
+
+                        <div class="dental-row-wrapper">
+
+                            <!-- =========================
+                                 Upper Right
+                            ========================== -->
+
+                            <div class="quadrant">
+
+                                <div class="quadrant-label">
+                                    الفك العلوي - يمين
+                                </div>
+
+                                <div
+                                    class="dental-half"
+                                    id="upperRight">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =========================
+                                 Upper Left
+                            ========================== -->
+
+                            <div class="quadrant">
+
+                                <div class="quadrant-label">
+                                    الفك العلوي - يسار
+                                </div>
+
+                                <div
+                                    class="dental-half"
+                                    id="upperLeft">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <hr>
+
+
+                        <div class="dental-row-wrapper">
+
+                            <!-- =========================
+                                 Lower Right
+                            ========================== -->
+
+                            <div class="quadrant">
+
+                                <div class="quadrant-label">
+                                    الفك السفلي - يمين
+                                </div>
+
+                                <div
+                                    class="dental-half"
+                                    id="lowerRight">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =========================
+                                 Lower Left
+                            ========================== -->
+
+                            <div class="quadrant">
+
+                                <div class="quadrant-label">
+                                    الفك السفلي - يسار
+                                </div>
+
+                                <div
+                                    class="dental-half"
+                                    id="lowerLeft">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="selected-teeth-box">
+
+                        <strong>
+                            الأسنان المختارة
+                        </strong>
+
+                        <span id="selectedTeethText">
+                            لا يوجد
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================
+         Notes
+    ======================================== -->
+
+    <section class="card card-custom mb-4">
+
+        <div class="card-body">
+            <h4 class="section-title">
+                ملاحظات
+            </h4>
+
+            <textarea
+                id="notes"
+                rows="5"
+                class="form-control"></textarea>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================
+         Submit
+    ======================================== -->
+
+    <div class="d-grid">
+
+        <button
+            id="submitBtn"
+            class="btn btn-warning btn-lg">
+
+            إرسال الإحالة
+
+        </button>
+
+    </div>
+
+
+</div>
+
+
+<script type="module" src="js/script.js"></script>
+
+</body>
+
+</html>
