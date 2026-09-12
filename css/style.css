@@ -309,3 +309,16 @@ textarea {
 .tooth-group.purple .tooth-option span {
     color: #7b1fa2;
 }
+/* Fix tooth quadrants direction */
+.tooth-group {
+    direction: ltr;
+}
+
+.tooth-group-title {
+    text-align: left;
+}
+
+.tooth-group-teeth {
+    direction: ltr;
+    justify-content: flex-start;
+}
