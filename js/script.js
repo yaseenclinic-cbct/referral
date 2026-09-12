@@ -63,108 +63,314 @@ async function loadDoctor() {
 
 const selectedTeeth = new Set();
 
-const toothNumbers = [
-    11, 12, 13, 14, 15, 16, 17, 18,
-    21, 22, 23, 24, 25, 26, 27, 28,
-    31, 32, 33, 34, 35, 36, 37, 38,
-    41, 42, 43, 44, 45, 46, 47, 48
+const toothGroups = [
+    {
+        name: "UR",
+        color: "blue",
+        teeth: [11, 12, 13, 14, 15, 16, 17, 18]
+    },
+    {
+        name: "UL",
+        color: "red",
+        teeth: [21, 22, 23, 24, 25, 26, 27, 28]
+    },
+    {
+        name: "LL",
+        color: "green",
+        teeth: [31, 32, 33, 34, 35, 36, 37, 38]
+    },
+    {
+        name: "LR",
+        color: "purple",
+        teeth: [41, 42, 43, 44, 45, 46, 47, 48]
+    }
 ];
 
 const cbctTooth = document.getElementById("cbctTooth");
-const toothChartContainer = document.getElementById("toothChartContainer");
-const toothDropdownBtn = document.getElementById("toothDropdownBtn");
-const toothDropdownMenu = document.getElementById("toothDropdownMenu");
-const toothOptions = document.getElementById("toothOptions");
-const selectedTeethText = document.getElementById("selectedTeethText");
+const toothChartContainer =
+    document.getElementById("toothChartContainer");
+
+const toothDropdownBtn =
+    document.getElementById("toothDropdownBtn");
+
+const toothDropdownMenu =
+    document.getElementById("toothDropdownMenu");
+
+const toothOptions =
+    document.getElementById("toothOptions");
+
+const selectedTeethText =
+    document.getElementById("selectedTeethText");
+
+
+// ========================================
+// Update Selected Teeth Text
+// ========================================
 
 function updateSelectedTeeth() {
-    const teeth = Array.from(selectedTeeth).sort((a, b) => a - b);
+
+    const teeth = Array.from(selectedTeeth)
+        .sort((a, b) => a - b);
 
     if (teeth.length === 0) {
-        selectedTeethText.textContent = "اختيار الأسنان";
+
+        selectedTeethText.textContent =
+            "اختيار الأسنان";
+
     } else {
-        selectedTeethText.textContent = teeth.join(", ");
+
+        selectedTeethText.textContent =
+            teeth.join(", ");
+
     }
 }
 
+
+// ========================================
+// Create Tooth Options
+// ========================================
+
 function createToothOptions() {
+
     if (!toothOptions) return;
 
     toothOptions.innerHTML = "";
 
-    toothNumbers.forEach(toothNumber => {
-        const label = document.createElement("label");
-        label.className = "tooth-option";
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.value = toothNumber;
+    toothGroups.forEach(group => {
 
-        checkbox.addEventListener("change", () => {
-            if (checkbox.checked) {
-                selectedTeeth.add(toothNumber);
-            } else {
-                selectedTeeth.delete(toothNumber);
-            }
+        const groupRow =
+            document.createElement("div");
 
-            updateSelectedTeeth();
+        groupRow.className =
+            "tooth-group " + group.color;
+
+
+        // Quadrant title
+
+        const groupTitle =
+            document.createElement("div");
+
+        groupTitle.className =
+            "tooth-group-title";
+
+        groupTitle.textContent =
+            group.name;
+
+
+        groupRow.appendChild(groupTitle);
+
+
+        // Teeth
+
+        const teethContainer =
+            document.createElement("div");
+
+        teethContainer.className =
+            "tooth-group-teeth";
+
+
+        group.teeth.forEach(toothNumber => {
+
+            const label =
+                document.createElement("label");
+
+            label.className =
+                "tooth-option";
+
+
+            const checkbox =
+                document.createElement("input");
+
+            checkbox.type = "checkbox";
+            checkbox.value = toothNumber;
+
+
+            checkbox.addEventListener(
+                "change",
+                () => {
+
+                    if (checkbox.checked) {
+
+                        selectedTeeth.add(
+                            toothNumber
+                        );
+
+                    } else {
+
+                        selectedTeeth.delete(
+                            toothNumber
+                        );
+
+                    }
+
+                    updateSelectedTeeth();
+
+                }
+            );
+
+
+            const number =
+                document.createElement("span");
+
+            number.textContent =
+                toothNumber;
+
+
+            label.appendChild(checkbox);
+            label.appendChild(number);
+
+            teethContainer.appendChild(label);
+
         });
 
-        const number = document.createElement("span");
-        number.textContent = toothNumber;
 
-        label.appendChild(checkbox);
-        label.appendChild(number);
-        toothOptions.appendChild(label);
+        groupRow.appendChild(
+            teethContainer
+        );
+
+        toothOptions.appendChild(
+            groupRow
+        );
+
     });
 }
 
+
+// ========================================
+// Get Selected Teeth
+// ========================================
+
 function getSelectedTeeth() {
-    return Array.from(selectedTeeth).sort((a, b) => a - b);
+
+    return Array.from(selectedTeeth)
+        .sort((a, b) => a - b);
+
 }
 
+
+// ========================================
+// Clear Selected Teeth
+// ========================================
+
 function clearSelectedTeeth() {
+
     selectedTeeth.clear();
 
     document
-        .querySelectorAll("#toothOptions input[type=checkbox]")
+        .querySelectorAll(
+            "#toothOptions input[type=checkbox]"
+        )
         .forEach(checkbox => {
             checkbox.checked = false;
+
         });
 
     updateSelectedTeeth();
+
 }
+
+
+// ========================================
+// Show / Hide Tooth Selector
+// ========================================
 
 if (cbctTooth && toothChartContainer) {
-    cbctTooth.addEventListener("change", () => {
-        if (cbctTooth.checked) {
-            toothChartContainer.style.display = "block";
-        } else {
-            toothChartContainer.style.display = "none";
-            clearSelectedTeeth();
-            if (toothDropdownMenu) toothDropdownMenu.hidden = true;
-            if (toothDropdownBtn) toothDropdownBtn.setAttribute("aria-expanded", "false");
+
+    cbctTooth.addEventListener(
+        "change",
+        () => {
+
+            if (cbctTooth.checked) {
+
+                toothChartContainer.style.display =
+                    "block";
+
+            } else {
+
+                toothChartContainer.style.display =
+                    "none";
+
+                clearSelectedTeeth();
+
+                if (toothDropdownMenu) {
+
+                    toothDropdownMenu.hidden = true;
+
+                }
+
+                if (toothDropdownBtn) {
+
+                    toothDropdownBtn.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                }
+
+            }
+
         }
-    });
+    );
+
 }
 
-if (toothDropdownBtn && toothDropdownMenu) {
-    toothDropdownBtn.addEventListener("click", () => {
-        toothDropdownMenu.hidden = !toothDropdownMenu.hidden;
-        toothDropdownBtn.setAttribute("aria-expanded", String(!toothDropdownMenu.hidden));
-    });
 
-    document.addEventListener("click", event => {
-        if (!event.target.closest(".tooth-selector")) {
-            toothDropdownMenu.hidden = true;
-            toothDropdownBtn.setAttribute("aria-expanded", "false");
+// ========================================
+// Dropdown Open / Close
+// ========================================
+
+if (
+    toothDropdownBtn &&
+    toothDropdownMenu
+) {
+
+    toothDropdownBtn.addEventListener(
+        "click",
+        () => {
+
+            toothDropdownMenu.hidden =
+                !toothDropdownMenu.hidden;
+
+            toothDropdownBtn.setAttribute(
+                "aria-expanded",
+                String(
+                    !toothDropdownMenu.hidden
+                )
+            );
+
         }
-    });
+    );
+
+
+    document.addEventListener(
+        "click",
+        event => {
+
+            if (
+                !event.target.closest(
+                    ".tooth-selector"
+                )
+            ) {
+
+                toothDropdownMenu.hidden =
+                    true;
+
+                toothDropdownBtn.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            }
+
+        }
+    );
+
 }
+
 
 createToothOptions();
 updateSelectedTeeth();
-
 
 // ========================================
 // Build X-Ray List
