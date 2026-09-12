@@ -228,4 +228,84 @@ textarea {
         font-size: 13px;
     }
 }
+/* ========================================
+   CBCT Tooth Dropdown - Quadrants
+======================================== */
 
+.tooth-dropdown-menu {
+    padding: 12px;
+}
+
+.tooth-group {
+    margin-bottom: 12px;
+}
+
+.tooth-group:last-child {
+    margin-bottom: 0;
+}
+
+.tooth-group-title {
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 6px;
+    text-align: right;
+}
+
+.tooth-group-teeth {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.tooth-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    min-width: 28px;
+}
+
+.tooth-option input {
+    margin: 0;
+    cursor: pointer;
+}
+
+.tooth-option span {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+/* UR - Blue */
+
+.tooth-group.blue .tooth-group-title,
+.tooth-group.blue .tooth-option span {
+    color: #1976d2;
+}
+
+
+/* UL - Red */
+
+.tooth-group.red .tooth-group-title,
+.tooth-group.red .tooth-option span {
+    color: #d32f2f;
+}
+
+
+/* LL - Green */
+
+.tooth-group.green .tooth-group-title,
+.tooth-group.green .tooth-option span {
+    color: #2e7d32;
+}
+
+
+/* LR - Purple */
+
+.tooth-group.purple .tooth-group-title,
+.tooth-group.purple .tooth-option span {
+    color: #7b1fa2;
+}
