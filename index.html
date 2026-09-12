@@ -207,20 +207,37 @@
             </div>
 
             <!-- ========================================
-                 CBCT Tooth Selector
-            ======================================== -->
-            <div id="toothChartContainer">
-                <div class="tooth-selector">
-                    <button type="button" id="toothDropdownBtn" class="tooth-dropdown-btn" aria-expanded="false">
-                        <span id="selectedTeethText">اختيار الأسنان</span>
-                        <span class="dropdown-arrow">⌄</span>
-                    </button>
+     CBCT Tooth Selector
+======================================== -->
+<div id="toothChartContainer">
+    <div class="tooth-selector">
 
-                    <div id="toothDropdownMenu" class="tooth-dropdown-menu" hidden>
-                        <div class="tooth-options" id="toothOptions"></div>
-                    </div>
-                </div>
-            </div>
+        <button
+            type="button"
+            id="toothDropdownBtn"
+            class="tooth-dropdown-btn"
+            aria-expanded="false">
+
+            <span id="selectedTeethText">
+                اختيار الأسنان
+            </span>
+
+            <span class="dropdown-arrow">⌄</span>
+
+        </button>
+
+
+        <div
+            id="toothDropdownMenu"
+            class="tooth-dropdown-menu"
+            hidden>
+
+            <div id="toothOptions"></div>
+
+        </div>
+
+    </div>
+</div>
 
             <!-- Remaining X-Ray Options -->
             <div class="row mt-2">
