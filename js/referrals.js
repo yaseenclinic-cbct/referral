@@ -1991,4 +1991,3 @@ loadDoctors();
 
 loadReferrals();
   
-No file chosen
