@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
@@ -19,10 +19,6 @@
 
     <style>
 
-        /* ========================================
-           General
-        ======================================== */
-
         body {
             background: #f8f9fa;
         }
@@ -39,19 +35,9 @@
             margin: 0;
         }
 
-
-        /* ========================================
-           Add Case Button
-        ======================================== */
-
         #addCaseBtn {
             white-space: nowrap;
         }
-
-
-        /* ========================================
-           Add Case Modal
-        ======================================== */
 
         .add-case-section-title {
             font-weight: 700;
@@ -62,11 +48,6 @@
         .clinic-display {
             background: #f1f3f5;
         }
-
-
-        /* ========================================
-           Tooth Dropdown
-        ======================================== */
 
         #addToothChartContainer {
             display: none;
@@ -86,9 +67,11 @@
             border: 1px solid #ced4da;
             border-radius: 6px;
             padding: 8px 12px;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             cursor: pointer;
             text-align: right;
         }
@@ -104,12 +87,15 @@
 
         .tooth-dropdown-menu {
             position: absolute;
+
             z-index: 1056;
+
             top: calc(100% + 4px);
             left: 0;
             right: 0;
 
             background: #fff;
+
             border: 1px solid #ced4da;
             border-radius: 6px;
 
@@ -118,11 +104,6 @@
             box-shadow:
                 0 5px 15px rgba(0, 0, 0, 0.12);
         }
-
-
-        /* ========================================
-           Tooth Groups
-        ======================================== */
 
         .tooth-group {
             direction: ltr;
@@ -153,6 +134,7 @@
         .tooth-option {
             display: flex;
             flex-direction: column;
+
             align-items: center;
             justify-content: center;
 
@@ -173,41 +155,30 @@
             font-weight: 700;
         }
 
-
-        /* UR - Blue */
-
         .tooth-group.blue .tooth-group-title,
         .tooth-group.blue .tooth-option span {
             color: #1976d2;
         }
-
-
-        /* UL - Red */
 
         .tooth-group.red .tooth-group-title,
         .tooth-group.red .tooth-option span {
             color: #d32f2f;
         }
 
-
-        /* LL - Green */
-[2026-09-20 8:02 PM] سلمان مصور: .tooth-group.green .tooth-group-title,
+        .tooth-group.green .tooth-group-title,
         .tooth-group.green .tooth-option span {
             color: #2e7d32;
         }
-
-
-        /* LR - Purple */
 
         .tooth-group.purple .tooth-group-title,
         .tooth-group.purple .tooth-option span {
             color: #7b1fa2;
         }
 
-
-        /* ========================================
-           Mobile
-        ======================================== */
+        .table td,
+        .table th {
+            vertical-align: middle;
+        }
 
         @media (max-width: 576px) {
 
@@ -244,9 +215,7 @@
 <div class="container-fluid py-4 px-3">
 
 
-    <!-- ========================================
-         Page Header
-    ======================================== -->
+    <!-- Header -->
 
     <div class="page-header">
 
@@ -265,9 +234,7 @@
     </div>
 
 
-    <!-- ========================================
-         Search
-    ======================================== -->
+    <!-- Search -->
 
     <div class="mb-3">
 
@@ -281,9 +248,7 @@
     </div>
 
 
-    <!-- ========================================
-         Referrals Table
-    ======================================== -->
+    <!-- Table -->
 
     <div class="table-responsive">
 
@@ -294,39 +259,24 @@
                 <tr>
 
                     <th>الطبيب</th>
-
                     <th>العيادة</th>
-
                     <th>المريض</th>
-
                     <th>العمر</th>
-
                     <th>الهاتف</th>
-
                     <th>الجنس</th>
-
                     <th>الأشعة</th>
-
                     <th>الملاحظات</th>
-
                     <th>تاريخ الإحالة</th>
-
                     <th>Date of CBCT</th>
-
                     <th>CBCT Price</th>
-
                     <th>Done?</th>
-
                     <th>الإجراءات</th>
 
                 </tr>
 
             </thead>
 
-
-            <tbody id="referralTable">
-
-            </tbody>
+            <tbody id="referralTable"></tbody>
 
         </table>
 
@@ -336,9 +286,9 @@
 
 
 
-<!-- ========================================
-     Add New Case Modal
-======================================== -->
+<!-- =====================================================
+     ADD CASE MODAL
+===================================================== -->
 
 <div
     class="modal fade"
@@ -352,8 +302,6 @@
         <div class="modal-content">
 
 
-            <!-- Header -->
-
             <div class="modal-header">
 
                 <h5 class="modal-title">
@@ -364,20 +312,15 @@
                     type="button"
                     class="btn-close"
                     data-bs-dismiss="modal"
-                    aria-label="Close"
                 ></button>
 
             </div>
 
 
-            <!-- Body -->
-
             <div class="modal-body">
 
 
-                <!-- ========================================
-                     Doctor Information
-                ======================================== -->
+                <!-- Doctor -->
 
                 <div class="add-case-section-title">
                     بيانات الطبيب
@@ -397,7 +340,8 @@
                         id="addDoctor"
                         class="form-select"
                     >
-[2026-09-20 8:02 PM] سلمان مصور: <option value="">
+
+                        <option value="">
                             اختر الطبيب
                         </option>
 
@@ -428,9 +372,7 @@
                 <hr>
 
 
-                <!-- ========================================
-                     Patient Information
-                ======================================== -->
+                <!-- Patient -->
 
                 <div class="add-case-section-title mt-4">
                     بيانات المراجع
@@ -536,9 +478,7 @@
                 <hr>
 
 
-                <!-- ========================================
-                     X-Rays
-                ======================================== -->
+                <!-- X-rays -->
 
                 <div class="add-case-section-title mt-4">
                     أنواع الأشعة
@@ -547,8 +487,6 @@
 
                 <div class="row">
 
-
-                    <!-- CBCT Tooth -->
 
                     <div class="col-6 mb-2">
 
@@ -560,7 +498,8 @@
                                 id="addCbctTooth"
                                 value="CBCT Tooth"
                             >
-[2026-09-20 8:02 PM] سلمان مصور: <span class="form-check-label">
+
+                            <span class="form-check-label">
                                 CBCT Tooth
                             </span>
 
@@ -568,8 +507,6 @@
 
                     </div>
 
-
-                    <!-- CBCT Teeth -->
 
                     <div class="col-6 mb-2">
 
@@ -590,8 +527,6 @@
                     </div>
 
 
-                    <!-- CBCT Jaw -->
-
                     <div class="col-6 mb-2">
 
                         <label class="form-check">
@@ -610,8 +545,6 @@
 
                     </div>
 
-
-                    <!-- CBCT Full Mouth -->
 
                     <div class="col-6 mb-2">
 
@@ -632,8 +565,6 @@
                     </div>
 
 
-                    <!-- OPG -->
-
                     <div class="col-6 mb-2">
 
                         <label class="form-check">
@@ -652,8 +583,6 @@
 
                     </div>
 
-
-                    <!-- Cephalometric -->
 
                     <div class="col-6 mb-2">
 
@@ -674,8 +603,6 @@
                     </div>
 
 
-                    <!-- 3D Proface -->
-
                     <div class="col-6 mb-2">
 
                         <label class="form-check">
@@ -695,8 +622,6 @@
                     </div>
 
 
-                    <!-- Surgical Guide -->
-
                     <div class="col-6 mb-2">
 
                         <label class="form-check">
@@ -706,7 +631,8 @@
                                 type="checkbox"
                                 value="Surgical Guide"
                             >
-[2026-09-20 8:02 PM] سلمان مصور: <span class="form-check-label">
+
+                            <span class="form-check-label">
                                 Surgical Guide
                             </span>
 
@@ -714,8 +640,6 @@
 
                     </div>
 
-
-                    <!-- Report -->
 
                     <div class="col-6 mb-2">
 
@@ -735,8 +659,6 @@
 
                     </div>
 
-
-                    <!-- Ceph Analysis -->
 
                     <div class="col-6 mb-2">
 
@@ -759,14 +681,11 @@
                 </div>
 
 
-                <!-- ========================================
-                     CBCT Tooth Selector
-                ======================================== -->
+                <!-- Tooth selector -->
 
                 <div id="addToothChartContainer">
 
                     <div class="tooth-selector">
-
 
                         <button
                             type="button"
@@ -804,9 +723,7 @@
                 <hr>
 
 
-                <!-- ========================================
-                     Notes
-                ======================================== -->
+                <!-- Notes -->
 
                 <div class="add-case-section-title mt-4">
                     ملاحظات
@@ -822,8 +739,6 @@
 
             </div>
 
-
-            <!-- Footer -->
 
             <div class="modal-footer">
 
@@ -855,9 +770,9 @@
 
 
 
-<!-- ========================================
-     Referral Details Modal
-======================================== -->
+<!-- =====================================================
+     REFERRAL DETAILS MODAL
+===================================================== -->
 
 <div
     class="modal fade"
@@ -869,12 +784,14 @@
 
         <div class="modal-content">
 
+
             <div class="modal-header">
 
                 <h5 class="modal-title">
                     تفاصيل الإحالة
                 </h5>
-[2026-09-20 8:02 PM] سلمان مصور: <button
+
+                <button
                     type="button"
                     class="btn-close"
                     data-bs-dismiss="modal"
@@ -947,7 +864,7 @@
 ></script>
 
 
-<!-- Referral JS -->
+<!-- Firebase / Referrals -->
 
 <script
     type="module"
@@ -958,3 +875,5 @@
 </body>
 
 </html>
+  
+No file chosen
