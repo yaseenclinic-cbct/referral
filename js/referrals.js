@@ -1,4 +1,4 @@
-[2026-09-20 8:03 PM] سلمان مصور: import { db } from "./firebase.js";
+ import { db } from "./firebase.js";
 
 import {
     collection,
