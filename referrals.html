@@ -1,188 +1,590 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
+ <meta charset="UTF-8">
+ <meta
+ name="viewport"
+ content="width=device-width, initial-scale=1"
+ >
+ <title>Referrals</title>
+ <link
 
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    >
-
-    <title>Referrals</title>
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css"
-        rel="stylesheet"
-    >
-
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min
+.css"
+ rel="stylesheet"
+ >
+ <style>
+ body {
+ background: #f8f9fa;
+ }
+ .page-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ gap: 15px;
+ margin-bottom: 20px;
+ }
+ .page-header h2 {
+ margin: 0;
+ }
+ #addCaseBtn {
+ white-space: nowrap;
+ }
+ .add-case-section-title {
+ font-weight: 700;
+ font-size: 18px;
+ margin-bottom: 15px;
+ }
+ .clinic-display {
+ background: #f1f3f5;
+ }
+ /* ==============================
+ Tooth Dropdown
+ ============================== */
+ #addToothChartContainer {
+ display: none;
+ margin-top: 10px;
+ margin-bottom: 15px;
+ }
+ .tooth-selector {
+ position: relative;
+ width: 100%;
+ }
+ .tooth-dropdown-btn {
+ width: 100%;
+ min-height: 45px;
+ background: #fff;
+ border: 1px solid #ced4da;
+ border-radius: 6px;
+ padding: 8px 12px;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ cursor: pointer;
+ text-align: right;
+ }
+ .tooth-dropdown-btn:hover {
+ background: #f8f9fa;
+ }
+ .dropdown-arrow {
+ font-size: 20px;
+ line-height: 1;
+ }
+ .tooth-dropdown-menu {
+ position: absolute;
+ z-index: 1056;
+ top: calc(100% + 4px);
+ left: 0;
+ right: 0;
+ background: #fff;
+ border: 1px solid #ced4da;
+ border-radius: 6px;
+ padding: 12px;
+ box-shadow:
+ 0 5px 15px rgba(0, 0, 0, 0.12);
+ }
+ .tooth-group {
+ direction: ltr;
+ margin-bottom: 12px;
+ }
+ .tooth-group:last-child {
+ margin-bottom: 0;
+ }
+ .tooth-group-title {
+ font-weight: 800;
+ font-size: 14px;
+ margin-bottom: 6px;
+ text-align: left;
+ }
+ .tooth-group-teeth {
+ direction: ltr;
+ display: flex;
+ align-items: center;
+ justify-content: flex-start;
+ gap: 4px;
+ }
+ .tooth-option {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ gap: 3px;
+ cursor: pointer;
+ min-width: 28px;
+ }
+ .tooth-option input {
+ margin: 0;
+ cursor: pointer;
+ }
+ .tooth-option span {
+ font-size: 14px;
+ font-weight: 700;
+ }
+ .tooth-group.blue .tooth-group-title,
+ .tooth-group.blue .tooth-option span {
+ color: #1976d2;
+ }
+ .tooth-group.red .tooth-group-title,
+ .tooth-group.red .tooth-option span {
+ color: #d32f2f;
+ }
+ .tooth-group.green .tooth-group-title,
+ .tooth-group.green .tooth-option span {
+ color: #2e7d32;
+ }
+ .tooth-group.purple .tooth-group-title,
+ .tooth-group.purple .tooth-option span {
+ color: #7b1fa2;
+ }
+ @media (max-width: 576px) {
+ .page-header {
+ align-items: stretch;
+ flex-direction: column;
+ }
+ #addCaseBtn {
+ width: 100%;
+ }
+ .tooth-group-teeth {
+ gap: 2px;
+ }
+ .tooth-option {
+ min-width: 27px;
+ }
+ .tooth-option span {
+ font-size: 13px;
+ }
+ }
+ </style>
 </head>
-
-
 <body>
-
-<div class="container py-4">
-
-    <h2 class="mb-4">
-        الإحالات
-    </h2>
-
-
-    <div class="mb-3">
-
-        <input
-            type="text"
-            id="searchReferral"
-            class="form-control"
-            placeholder="🔍 ابحث باسم الطبيب أو العيادة أو المريض أو الهاتف"
-        >
-
-    </div>
-
-
-    <div class="table-responsive">
-
-        <table class="table table-bordered table-hover align-middle">
-
-            <thead>
-
-                <tr>
-
-                    <th>الطبيب</th>
-
-                    <th>العيادة</th>
-
-                    <th>المريض</th>
-
-                    <th>العمر</th>
-
-                    <th>الهاتف</th>
-
-                    <th>الجنس</th>
-
-                    <th>الأشعة</th>
-
-                    <th>الملاحظات</th>
-
-                    <th>تاريخ الإحالة</th>
-
-                    <th>Date of CBCT</th>
-
-                    <th>CBCT Price</th>
-
-                    <th>Done?</th>
-
-                    <th>الإجراءات</th>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody id="referralTable">
-
-            </tbody>
-
-        </table>
-
-    </div>
-
+<div class="container-fluid py-4 px-3">
+ <!-- Header -->
+ <div class="page-header">
+ <h2>
+ اإلحاالت
+ </h2>
+ <button
+ type="button"
+ id="addCaseBtn"
+ class="btn btn-primary"
+ >
+ جديدة حالة إضافة ＋
+ </button>
+ </div>
+ <!-- Search -->
+ <div class="mb-3">
+ <input
+ type="text"
+ id="searchReferral"
+ class="form-control"
+ placeholder="الهاتف أو المريض أو العيادة أو الطبيب باسم ابحث"
+ >
+ </div>
+ <!-- Referrals Table -->
+ <div class="table-responsive">
+ <table class="table table-bordered table-hover align-middle">
+ <thead>
+ <tr>
+ <th>الطبيب>/th>
+<th>العيادة>/th>
+<th>المريض>/th>
+<th>العمر>/th>
+<th>الهاتف>/th>
+<th>الجنس>/th>
+<th>األشعة>/th>
+<th>المالحظات>/th>
+<th>اإلحالة تاريخ>/th>
+<th>Date of CBCT</th>
+<th>CBCT Price</th>
+<th>Done?</th>
+<th>اإلجراءات>/th>
+ </tr>
+ </thead>
+ <tbody id="referralTable"></tbody>
+ </table>
+ </div>
 </div>
-
-
-<!-- Referral Details Modal -->
-
+<!-- ========================================
+ ADD CASE MODAL
+======================================== -->
 <div
-    class="modal fade"
-    id="referralModal"
-    tabindex="-1"
+ class="modal fade"
+ id="addCaseModal"
+ tabindex="-1"
+ aria-hidden="true"
 >
-
-    <div class="modal-dialog modal-lg">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5 class="modal-title">
-                    تفاصيل الإحالة
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                ></button>
-
-            </div>
-
-
-            <div class="modal-body">
-
-                <p>
-                    <strong>الطبيب:</strong>
-                    <span id="viewDoctor"></span>
-                </p>
-
-                <p>
-                    <strong>العيادة:</strong>
-                    <span id="viewClinic"></span>
-                </p>
-
-                <p>
-                    <strong>المريض:</strong>
-                    <span id="viewPatient"></span>
-                </p>
-
-                <p>
-                    <strong>العمر:</strong>
-                    <span id="viewAge"></span>
-                </p>
-
-                <p>
-                    <strong>الجنس:</strong>
-                    <span id="viewGender"></span>
-                </p>
-
-                <p>
-                    <strong>الهاتف:</strong>
-                    <span id="viewPhone"></span>
-                </p>
-
-                <p>
-                    <strong>الأشعة:</strong>
-                    <span id="viewXrays"></span>
-                </p>
-
-                <p>
-                    <strong>الملاحظات:</strong>
-                    <span id="viewNotes"></span>
-                </p>
-
-                <p>
-                    <strong>تاريخ الإحالة:</strong>
-                    <span id="viewDate"></span>
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
+ <div class="modal-dialog modal-lg modal-dialog-scrollable">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h5 class="modal-title">
+ جديدة حالة إضافة
+ </h5>
+ <button
+ type="button"
+class="btn-close"
+data-bs-dismiss="modal"
+ aria-label="Close"
+ ></button>
+ </div>
+ <div class="modal-body">
+ <!-- Doctor -->
+ <div class="add-case-section-title">
+ الطبيب بيانات
+ </div>
+ <div class="mb-3">
+ <label
+ for="addDoctor"
+class="form-label"
+ >
+ * المحول الطبيب
+ </label>
+ <select
+ id="addDoctor"
+class="form-select"
+ >
+ <option value="">
+ الطبيب اختر
+ </option>
+ </select>
+ </div>
+ <div class="mb-4">
+ <label
+ for="addClinic"
+class="form-label"
+ >
+ العيادة
+ </label>
+ <input
+ type="text"
+id="addClinic"
+class="form-control clinic-display"
+ readonly
+ >
+ </div>
+ <hr>
+ <!-- Patient -->
+ <div class="add-case-section-title mt-4">
+ المراجع بيانات
+ </div>
+ <div class="mb-3">
+ <label
+ for="addPatientName"
+class="form-label"
+ >
+ * الثالثي االسم
+ </label>
+ <input
+ type="text"
+id="addPatientName"
+class="form-control"
+ >
+ </div>
+ <div class="row">
+ <div class="col-md-6 mb-3">
+ <label
+ for="addPatientAge"
+class="form-label"
+ >
+ العمر
+ </label>
+ <input
+ type="number"
+id="addPatientAge"
+class="form-control"
+ >
+ </div>
+ <div class="col-md-6 mb-3">
+ <label
+ for="addPatientPhone"
+class="form-label"
+ >
+ * الهاتف رقم
+ </label>
+ <input
+ type="tel"
+id="addPatientPhone"
+class="form-control"
+ >
+ </div>
+ </div>
+ <!-- Gender -->
+ <div class="mb-4">
+ <label class="form-label">
+ الجنس
+ </label>
+ <div class="d-flex gap-4">
+ <label>
+ <input
+ type="radio"
+name="addGender"
+value="ذكر"
+ >
+ ذكر
+ </label>
+ <label>
+ <input
+ type="radio"
+name="addGender"
+value="أنثى"
+ >
+ أنثى
+ </label>
+ </div>
+ </div>
+ <hr>
+ <!-- X-rays -->
+ <div class="add-case-section-title mt-4">
+ األشعة أنواع
+ </div>
+ <div class="row">
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+id="addCbctTooth"
+value="CBCT Tooth"
+ >
+ <span class="form-check-label">
+ CBCT Tooth
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="CBCT Teeth"
+ >
+ <span class="form-check-label">
+ CBCT Teeth
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="CBCT Jaw"
+ >
+ <span class="form-check-label">
+ CBCT Jaw
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="CBCT Full Mouth"
+ >
+ <span class="form-check-label">
+ CBCT Full Mouth
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="OPG"
+ >
+ <span class="form-check-label">
+ OPG
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="Cephalometric"
+ >
+ <span class="form-check-label">
+ Cephalometric
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="3D Proface"
+ >
+ <span class="form-check-label">
+ 3D Proface
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="Surgical Guide"
+ >
+ <span class="form-check-label">
+ Surgical Guide
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="Report"
+ >
+ <span class="form-check-label">
+ Report
+ </span>
+ </label>
+ </div>
+ <div class="col-6 mb-2">
+ <label class="form-check">
+ <input
+ class="form-check-input add-xray-option"
+ type="checkbox"
+value="Ceph Analysis"
+ >
+ <span class="form-check-label">
+ Ceph Analysis
+ </span>
+ </label>
+ </div>
+ </div>
+ <!-- Tooth selector -->
+ <div id="addToothChartContainer">
+ <div class="tooth-selector">
+ <button
+ type="button"
+id="addToothDropdownBtn"
+class="tooth-dropdown-btn"
+ aria-expanded="false"
+ >
+ <span id="addSelectedTeethText">
+ األسنان اختيار
+ </span>
+ <span class="dropdown-arrow">
+ ⌄
+ </span>
+ </button>
+ <div
+ id="addToothDropdownMenu"
+class="tooth-dropdown-menu"
+ hidden
+ >
+ <div id="addToothOptions"></div>
+ </div>
+ </div>
+ </div>
+ <hr>
+ <!-- Notes -->
+ <div class="add-case-section-title mt-4">
+ مالحظات
+ </div>
+ <textarea
+ id="addNotes"
+rows="4"
+class="form-control"
+ ></textarea>
+ </div>
+ <div class="modal-footer">
+ <button
+ type="button"
+ class="btn btn-secondary"
+data-bs-dismiss="modal"
+ >
+ إلغاء
+ </button>
+ <button
+ type="button"
+id="saveNewCaseBtn"
+class="btn btn-primary"
+ >
+ الحالة حفظ
+ </button>
+ </div>
+ </div>
+ </div>
 </div>
-
-
+<!-- ========================================
+ DETAILS MODAL
+======================================== -->
+<div
+ class="modal fade"
+ id="referralModal"
+ tabindex="-1"
+>
+ <div class="modal-dialog modal-lg">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h5 class="modal-title">
+ اإلحالة تفاصيل
+ </h5>
+ <button
+ type="button"
+class="btn-close"
+data-bs-dismiss="modal"
+ ></button>
+ </div>
+ <div class="modal-body">
+ <p>
+ <strong>:الطبيب>/strong>
+<span id="viewDoctor"></span>
+ </p>
+ <p>
+ <strong>:العيادة>/strong>
+<span id="viewClinic"></span>
+ </p>
+ <p>
+ <strong>:المريض>/strong>
+<span id="viewPatient"></span>
+ </p>
+ <p>
+ <strong>:العمر>/strong>
+<span id="viewAge"></span>
+ </p>
+ <p>
+ <strong>:الجنس>/strong>
+<span id="viewGender"></span>
+ </p>
+ <p>
+ <strong>:الهاتف>/strong>
+<span id="viewPhone"></span>
+ </p>
+ <p>
+ <strong>:األشعة>/strong>
+<span id="viewXrays"></span>
+ </p>
+ <p>
+ <strong>:المالحظات>/strong>
+<span id="viewNotes"></span>
+ </p>
+ <p>
+ <strong>:اإلحالة تاريخ>/strong>
+<span id="viewDate"></span>
+ </p>
+ </div>
+ </div>
+ </div>
+</div>
+<!-- Bootstrap -->
 <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-></script>
 
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.mi
+n.js"
+></script>
+<!-- Referrals JS -->
 <script
-    type="module"
-    src="js/referrals.js"
+ type="module"
+ src="js/referrals.js"
 ></script>
-
 </body>
-
 </html>
