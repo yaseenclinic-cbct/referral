@@ -1,15 +1,13 @@
- import { db } from "./firebase.js";
+import { db } from "./firebase.js";
 
 import {
     collection,
     onSnapshot,
     deleteDoc,
     doc,
-    query,
-    orderBy,
-    updateDoc,
     getDocs,
     addDoc,
+    updateDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -18,39 +16,43 @@ const GOOGLE_SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbwl_YFz58K6Cu1238_fbS4UoQkp5JIhpq9x7lLhWw0jdibnjf-obpgb-V9MPtuK7fg/exec";
 
 
-// ========================================
-// Existing Referral Details Modal
-// ========================================
+console.log("REFERRALS JS LOADED");
+
+
+// ======================================================
+// Bootstrap Modals
+// ======================================================
+
+const referralModalElement =
+    document.getElementById("referralModal");
+
+const addCaseModalElement =
+    document.getElementById("addCaseModal");
+
 
 const referralModal =
-    new bootstrap.Modal(
-        document.getElementById("referralModal")
-    );
+    referralModalElement
+        ? new bootstrap.Modal(referralModalElement)
+        : null;
 
-
-// ========================================
-// Add New Case Modal
-// ========================================
 
 const addCaseModal =
-    new bootstrap.Modal(
-        document.getElementById("addCaseModal")
-    );
+    addCaseModalElement
+        ? new bootstrap.Modal(addCaseModalElement)
+        : null;
 
+
+// ======================================================
+// Global
+// ======================================================
 
 let allReferrals = [];
-
-
-// ========================================
-// Doctors
-// ========================================
-
 let allDoctors = [];
 
 
-// ========================================
-// CBCT Tooth Selection - Add Case
-// ========================================
+// ======================================================
+// Tooth Selection
+// ======================================================
 
 const selectedAddTeeth = new Set();
 
@@ -99,66 +101,48 @@ const addToothGroups = [
 const addCbctTooth =
     document.getElementById("addCbctTooth");
 
-
 const addToothChartContainer =
-    document.getElementById(
-        "addToothChartContainer"
-    );
-
+    document.getElementById("addToothChartContainer");
 
 const addToothDropdownBtn =
-    document.getElementById(
-        "addToothDropdownBtn"
-    );
-
+    document.getElementById("addToothDropdownBtn");
 
 const addToothDropdownMenu =
-    document.getElementById(
-        "addToothDropdownMenu"
-    );
-
+    document.getElementById("addToothDropdownMenu");
 
 const addToothOptions =
-    document.getElementById(
-        "addToothOptions"
-    );
-
+    document.getElementById("addToothOptions");
 
 const addSelectedTeethText =
-    document.getElementById(
-        "addSelectedTeethText"
-    );
+    document.getElementById("addSelectedTeethText");
 
 
-// ========================================
-// Update Selected Teeth Text
-// ========================================
+// ======================================================
+// Selected Teeth Text
+// ======================================================
 
 function updateAddSelectedTeeth() {
+
+    if (!addSelectedTeethText) {
+        return;
+    }
 
     const teeth =
         Array.from(selectedAddTeeth)
             .sort((a, b) => a - b);
 
 
-    if (teeth.length === 0) {
-
-        addSelectedTeethText.textContent =
-            "اختيار الأسنان";
-
-    } else {
-
-        addSelectedTeethText.textContent =
-            teeth.join(", ");
-
-    }
+    addSelectedTeethText.textContent =
+        teeth.length
+            ? teeth.join(", ")
+            : "اختيار الأسنان";
 
 }
 
 
-// ========================================
+// ======================================================
 // Create Tooth Options
-// ========================================
+// ======================================================
 
 function createAddToothOptions() {
 
@@ -176,11 +160,8 @@ function createAddToothOptions() {
             document.createElement("div");
 
         groupRow.className =
-            "tooth-group " +
-            group.color;
+            `tooth-group ${group.color}`;
 
-
-        // Quadrant title
 
         const groupTitle =
             document.createElement("div");
@@ -191,13 +172,6 @@ function createAddToothOptions() {
         groupTitle.textContent =
             group.name;
 
-
-        groupRow.appendChild(
-            groupTitle
-        );
-
-
-        // Teeth container
 
         const teethContainer =
             document.createElement("div");
@@ -223,7 +197,9 @@ function createAddToothOptions() {
 
             checkbox.value =
                 toothNumber;
-[2026-09-20 8:03 PM] سلمان مصور: checkbox.addEventListener(
+
+
+            checkbox.addEventListener(
                 "change",
                 () => {
 
@@ -254,54 +230,27 @@ function createAddToothOptions() {
                 toothNumber;
 
 
-            label.appendChild(
-                checkbox
-            );
+            label.appendChild(checkbox);
+            label.appendChild(number);
 
-            label.appendChild(
-                number
-            );
-
-
-            teethContainer.appendChild(
-                label
-            );
+            teethContainer.appendChild(label);
 
         });
 
 
-        groupRow.appendChild(
-            teethContainer
-        );
+        groupRow.appendChild(groupTitle);
+        groupRow.appendChild(teethContainer);
 
-
-        addToothOptions.appendChild(
-            groupRow
-        );
+        addToothOptions.appendChild(groupRow);
 
     });
 
 }
 
 
-// ========================================
-// Get Selected Teeth
-// ========================================
-
-function getSelectedAddTeeth() {
-
-    return Array.from(
-        selectedAddTeeth
-    ).sort(
-        (a, b) => a - b
-    );
-
-}
-
-
-// ========================================
+// ======================================================
 // Clear Teeth
-// ========================================
+// ======================================================
 
 function clearAddSelectedTeeth() {
 
@@ -310,12 +259,11 @@ function clearAddSelectedTeeth() {
 
     document
         .querySelectorAll(
-            "#addToothOptions input[type=checkbox]"
+            "#addToothOptions input[type='checkbox']"
         )
-        .forEach(checkbox => {
+        .forEach(input => {
 
-            checkbox.checked =
-                false;
+            input.checked = false;
 
         });
 
@@ -325,14 +273,11 @@ function clearAddSelectedTeeth() {
 }
 
 
-// ========================================
-// Show / Hide Tooth Selector
-// ========================================
+// ======================================================
+// CBCT Tooth Toggle
+// ======================================================
 
-if (
-    addCbctTooth &&
-    addToothChartContainer
-) {
+if (addCbctTooth) {
 
     addCbctTooth.addEventListener(
         "change",
@@ -340,33 +285,23 @@ if (
 
             if (addCbctTooth.checked) {
 
-                addToothChartContainer.style.display =
-                    "block";
+                if (addToothChartContainer) {
+
+                    addToothChartContainer.style.display =
+                        "block";
+
+                }
 
             } else {
 
-                addToothChartContainer.style.display =
-                    "none";
+                if (addToothChartContainer) {
+
+                    addToothChartContainer.style.display =
+                        "none";
+
+                }
 
                 clearAddSelectedTeeth();
-
-
-                if (addToothDropdownMenu) {
-
-                    addToothDropdownMenu.hidden =
-                        true;
-
-                }
-
-
-                if (addToothDropdownBtn) {
-
-                    addToothDropdownBtn.setAttribute(
-                        "aria-expanded",
-                        "false"
-                    );
-
-                }
 
             }
 
@@ -376,9 +311,9 @@ if (
 }
 
 
-// ========================================
+// ======================================================
 // Tooth Dropdown
-// ========================================
+// ======================================================
 
 if (
     addToothDropdownBtn &&
@@ -387,14 +322,12 @@ if (
 
     addToothDropdownBtn.addEventListener(
         "click",
-        (event) => {
+        event => {
 
             event.stopPropagation();
 
-
             addToothDropdownMenu.hidden =
                 !addToothDropdownMenu.hidden;
-
 
             addToothDropdownBtn.setAttribute(
                 "aria-expanded",
@@ -419,9 +352,9 @@ if (
 }
 
 
-// ========================================
-// Build X-Ray List
-// ========================================
+// ======================================================
+// Get X-Rays
+// ======================================================
 
 function getNewCaseXrays() {
 
@@ -432,21 +365,15 @@ function getNewCaseXrays() {
         .querySelectorAll(
             ".add-xray-option:checked"
         )
-        .forEach(checkbox => {
+        .forEach(input => {
 
             if (
-                checkbox.id ===
-                "addCbctTooth"
+                input.id === "addCbctTooth"
             ) {
-
                 return;
-
             }
 
-
-            xrays.push(
-                checkbox.value
-            );
+            xrays.push(input.value);
 
         });
 
@@ -457,11 +384,13 @@ function getNewCaseXrays() {
     ) {
 
         const teeth =
-            getSelectedAddTeeth();
+            Array.from(selectedAddTeeth)
+                .sort((a, b) => a - b);
 
 
         if (teeth.length > 0) {
-[2026-09-20 8:03 PM] سلمان مصور: xrays.push(
+
+            xrays.push(
                 "CBCT Tooth: " +
                 teeth.join(", ")
             );
@@ -476,16 +405,14 @@ function getNewCaseXrays() {
 }
 
 
-// ========================================
+// ======================================================
 // Load Doctors
-// ========================================
+// ======================================================
 
 async function loadDoctors() {
 
     const doctorSelect =
-        document.getElementById(
-            "addDoctor"
-        );
+        document.getElementById("addDoctor");
 
 
     if (!doctorSelect) {
@@ -494,6 +421,11 @@ async function loadDoctors() {
 
 
     try {
+
+        console.log(
+            "Loading doctors..."
+        );
+
 
         const snapshot =
             await getDocs(
@@ -512,8 +444,7 @@ async function loadDoctors() {
 
                 allDoctors.push({
 
-                    id:
-                        doctorDoc.id,
+                    id: doctorDoc.id,
 
                     ...doctorDoc.data()
 
@@ -523,36 +454,31 @@ async function loadDoctors() {
         );
 
 
+        console.log(
+            "Doctors loaded:",
+            allDoctors
+        );
+
+
         allDoctors.sort(
-            (a, b) => {
-
-                const nameA =
-                    a.doctorName || "";
-
-                const nameB =
-                    b.doctorName || "";
-
-
-                return nameA.localeCompare(
-                    nameB,
-                    "ar"
-                );
-
-            }
+            (a, b) =>
+                (a.doctorName || "")
+                    .localeCompare(
+                        b.doctorName || "",
+                        "ar"
+                    )
         );
 
 
         doctorSelect.innerHTML =
-            <option value="">اختر الطبيب</option>;
+            `<option value="">اختر الطبيب</option>`;
 
 
         allDoctors.forEach(
             doctor => {
 
                 const option =
-                    document.createElement(
-                        "option"
-                    );
+                    document.createElement("option");
 
 
                 option.value =
@@ -563,9 +489,7 @@ async function loadDoctors() {
                     doctor.doctorName || "";
 
 
-                doctorSelect.appendChild(
-                    option
-                );
+                doctorSelect.appendChild(option);
 
             }
         );
@@ -574,13 +498,13 @@ async function loadDoctors() {
     } catch (error) {
 
         console.error(
-            "Error loading doctors:",
+            "LOAD DOCTORS ERROR:",
             error
         );
 
-
         alert(
-            "تعذر تحميل قائمة الأطباء"
+            "تعذر تحميل قائمة الأطباء:\n\n" +
+            error.message
         );
 
     }
@@ -588,20 +512,15 @@ async function loadDoctors() {
 }
 
 
-// ========================================
+// ======================================================
 // Doctor Selection
-// ========================================
+// ======================================================
 
 const addDoctor =
-    document.getElementById(
-        "addDoctor"
-    );
-
+    document.getElementById("addDoctor");
 
 const addClinic =
-    document.getElementById(
-        "addClinic"
-    );
+    document.getElementById("addClinic");
 
 
 if (addDoctor) {
@@ -610,24 +529,22 @@ if (addDoctor) {
         "change",
         () => {
 
-            const selectedDoctor =
+            const doctor =
                 allDoctors.find(
-                    doctor =>
-                        doctor.id ===
+                    item =>
+                        item.id ===
                         addDoctor.value
                 );
 
 
-            if (selectedDoctor) {
+            if (doctor) {
 
                 addClinic.value =
-                    selectedDoctor.clinicName ||
-                    "";
+                    doctor.clinicName || "";
 
             } else {
 
-                addClinic.value =
-                    "";
+                addClinic.value = "";
 
             }
 
@@ -637,51 +554,57 @@ if (addDoctor) {
 }
 
 
-// ========================================
+// ======================================================
 // Reset Add Case Form
-// ========================================
+// ======================================================
 
 function resetAddCaseForm() {
 
-    const formIds = [
+    if (addDoctor) {
+        addDoctor.value = "";
+    }
 
-        "addDoctor",
-        "addPatientName",
-        "addPatientAge",
-        "addPatientPhone",
-        "addNotes"
-
-    ];
+    if (addClinic) {
+        addClinic.value = "";
+    }
 
 
-    document.getElementById(
-        "addDoctor"
-    ).value = "";
+    const patientName =
+        document.getElementById(
+            "addPatientName"
+        );
+
+    const patientAge =
+        document.getElementById(
+            "addPatientAge"
+        );
+
+    const patientPhone =
+        document.getElementById(
+            "addPatientPhone"
+        );
+
+    const notes =
+        document.getElementById(
+            "addNotes"
+        );
 
 
-    document.getElementById(
-        "addClinic"
-    ).value = "";
+    if (patientName) {
+        patientName.value = "";
+    }
 
+    if (patientAge) {
+        patientAge.value = "";
+    }
 
-    document.getElementById(
-        "addPatientName"
-    ).value = "";
+    if (patientPhone) {
+        patientPhone.value = "";
+    }
 
-
-    document.getElementById(
-        "addPatientAge"
-    ).value = "";
-
-
-    document.getElementById(
-        "addPatientPhone"
-    ).value = "";
-
-
-    document.getElementById(
-        "addNotes"
-    ).value = "";
+    if (notes) {
+        notes.value = "";
+    }
 
 
     document
@@ -690,8 +613,7 @@ function resetAddCaseForm() {
         )
         .forEach(input => {
 
-            input.checked =
-                false;
+            input.checked = false;
 
         });
 
@@ -700,10 +622,9 @@ function resetAddCaseForm() {
         .querySelectorAll(
             ".add-xray-option"
         )
-        .forEach(checkbox => {
+        .forEach(input => {
 
-            checkbox.checked =
-                false;
+            input.checked = false;
 
         });
 
@@ -725,7 +646,9 @@ function resetAddCaseForm() {
             true;
 
     }
-[2026-09-20 8:03 PM] سلمان مصور: if (addToothDropdownBtn) {
+
+
+    if (addToothDropdownBtn) {
 
         addToothDropdownBtn.setAttribute(
             "aria-expanded",
@@ -737,14 +660,12 @@ function resetAddCaseForm() {
 }
 
 
-// ========================================
-// Open Add Case Modal
-// ========================================
+// ======================================================
+// Add Case Button
+// ======================================================
 
 const addCaseBtn =
-    document.getElementById(
-        "addCaseBtn"
-    );
+    document.getElementById("addCaseBtn");
 
 
 if (addCaseBtn) {
@@ -755,7 +676,9 @@ if (addCaseBtn) {
 
             resetAddCaseForm();
 
-            addCaseModal.show();
+            if (addCaseModal) {
+                addCaseModal.show();
+            }
 
         }
     );
@@ -763,9 +686,9 @@ if (addCaseBtn) {
 }
 
 
-// ========================================
+// ======================================================
 // Save New Case
-// ========================================
+// ======================================================
 
 const saveNewCaseBtn =
     document.getElementById(
@@ -779,33 +702,23 @@ if (saveNewCaseBtn) {
         "click",
         async () => {
 
-            if (
-                saveNewCaseBtn.disabled
-            ) {
-
+            if (saveNewCaseBtn.disabled) {
                 return;
-
             }
-
-
-            saveNewCaseBtn.disabled =
-                true;
-
-
-            saveNewCaseBtn.textContent =
-                "جاري الحفظ...";
 
 
             try {
 
-                // ========================================
+                saveNewCaseBtn.disabled = true;
+
+                saveNewCaseBtn.textContent =
+                    "جاري الحفظ...";
+
+
                 // Doctor
-                // ========================================
 
                 const doctorId =
-                    document.getElementById(
-                        "addDoctor"
-                    ).value;
+                    addDoctor.value;
 
 
                 if (!doctorId) {
@@ -830,7 +743,7 @@ if (saveNewCaseBtn) {
                 if (!selectedDoctor) {
 
                     alert(
-                        "تعذر العثور على بيانات الطبيب"
+                        "تعذر العثور على الطبيب"
                     );
 
                     return;
@@ -838,38 +751,49 @@ if (saveNewCaseBtn) {
                 }
 
 
-                // ========================================
                 // Patient
-                // ========================================
 
                 const patientName =
-                    document.getElementById(
-                        "addPatientName"
-                    ).value.trim();
+                    document
+                        .getElementById(
+                            "addPatientName"
+                        )
+                        .value
+                        .trim();
 
 
                 const age =
-                    document.getElementById(
-                        "addPatientAge"
-                    ).value;
+                    document
+                        .getElementById(
+                            "addPatientAge"
+                        )
+                        .value;
 
 
                 const phone =
-                    document.getElementById(
-                        "addPatientPhone"
-                    ).value.trim();
+                    document
+                        .getElementById(
+                            "addPatientPhone"
+                        )
+                        .value
+                        .trim();
 
 
                 const gender =
-                    document.querySelector(
-                        "input[name='addGender']:checked"
-                    )?.value || "";
+                    document
+                        .querySelector(
+                            "input[name='addGender']:checked"
+                        )
+                        ?.value || "";
 
 
                 const notes =
-                    document.getElementById(
-                        "addNotes"
-                    ).value.trim();
+                    document
+                        .getElementById(
+                            "addNotes"
+                        )
+                        .value
+                        .trim();
 
 
                 if (
@@ -886,9 +810,7 @@ if (saveNewCaseBtn) {
                 }
 
 
-                // ========================================
-                // X-Rays
-                // ========================================
+                // X-rays
 
                 const xrays =
                     getNewCaseXrays();
@@ -896,24 +818,15 @@ if (saveNewCaseBtn) {
 
                 if (
                     addCbctTooth &&
-                    addCbctTooth.checked
+                    addCbctTooth.checked &&
+                    selectedAddTeeth.size === 0
                 ) {
 
-                    const teeth =
-                        getSelectedAddTeeth();
+                    alert(
+                        "يرجى اختيار سن واحد على الأقل لـ CBCT Tooth"
+                    );
 
-
-                    if (
-                        teeth.length === 0
-                    ) {
-
-                        alert(
-                            "يرجى اختيار سن واحد على الأقل لـ CBCT Tooth"
-                        );
-
-                        return;
-
-                    }
+                    return;
 
                 }
 
@@ -927,167 +840,167 @@ if (saveNewCaseBtn) {
                     return;
 
                 }
-[2026-09-20 8:03 PM] سلمان مصور: // ========================================
-                // Create Referral ID
-                // ========================================
+
+
+                // Referral ID
 
                 const referralID =
                     "YR-" +
                     Date.now();
 
 
-                // ========================================
                 // Firebase
-                // ========================================
+
+                const referralData = {
+
+                    referralID,
+
+                    doctorID:
+                        selectedDoctor.id || "",
+
+                    doctorName:
+                        selectedDoctor.doctorName || "",
+
+                    clinicName:
+                        selectedDoctor.clinicName || "",
+
+                    patientName,
+
+                    age,
+
+                    gender,
+
+                    phone,
+
+                    xrays,
+
+                    notes,
+
+                    dateOfCBCT: "",
+
+                    cbctPrice: "",
+
+                    done: false,
+
+                    createdAt:
+                        serverTimestamp()
+
+                };
+
+
+                console.log(
+                    "Saving referral:",
+                    referralData
+                );
+
 
                 await addDoc(
                     collection(
                         db,
                         "referrals"
                     ),
-                    {
-
-                        referralID,
-
-                        doctorID:
-                            selectedDoctor.id || "",
-
-                        doctorName:
-                            selectedDoctor.doctorName || "",
-
-                        clinicName:
-                            selectedDoctor.clinicName || "",
-
-                        patientName,
-
-                        age,
-
-                        gender,
-
-                        phone,
-
-                        xrays,
-
-                        notes,
-
-                        dateOfCBCT:
-                            "",
-
-                        cbctPrice:
-                            "",
-
-                        done:
-                            false,
-
-                        createdAt:
-                            serverTimestamp()
-
-                    }
+                    referralData
                 );
 
 
-                // ========================================
                 // Google Sheet
-                // ========================================
 
-                const formData =
-                    new URLSearchParams();
+                try {
 
-
-                formData.append(
-                    "referralID",
-                    referralID
-                );
+                    const formData =
+                        new URLSearchParams();
 
 
-                formData.append(
-                    "doctorID",
-                    selectedDoctor.id || ""
-                );
+                    formData.append(
+                        "referralID",
+                        referralID
+                    );
+
+                    formData.append(
+                        "doctorID",
+                        selectedDoctor.id || ""
+                    );
+
+                    formData.append(
+                        "doctorName",
+                        selectedDoctor.doctorName || ""
+                    );
+
+                    formData.append(
+                        "clinicName",
+                        selectedDoctor.clinicName || ""
+                    );
+
+                    formData.append(
+                        "patientName",
+                        patientName
+                    );
+
+                    formData.append(
+                        "age",
+                        age
+                    );
+
+                    formData.append(
+                        "gender",
+                        gender
+                    );
+
+                    formData.append(
+                        "phone",
+                        phone
+                    );
+
+                    formData.append(
+                        "xrays",
+                        xrays.join(", ")
+                    );
+
+                    formData.append(
+                        "notes",
+                        notes
+                    );
 
 
-                formData.append(
-                    "doctorName",
-                    selectedDoctor.doctorName || ""
-                );
+                    await fetch(
+                        GOOGLE_SCRIPT_URL,
+                        {
 
+                            method: "POST",
 
-                formData.append(
-                    "clinicName",
-                    selectedDoctor.clinicName || ""
-                );
+                            mode: "no-cors",
 
+                            headers: {
 
-                formData.append(
-                    "patientName",
-                    patientName
-                );
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded"
 
+                            },
 
-                formData.append(
-                    "age",
-                    age
-                );
+                            body:
+                                formData.toString()
 
+                        }
+                    );
 
-                formData.append(
-                    "gender",
-                    gender
-                );
+                } catch (sheetError) {
 
+                    console.error(
+                        "Google Sheet error:",
+                        sheetError
+                    );
 
-                formData.append(
-                    "phone",
-                    phone
-                );
+                }
 
-
-                formData.append(
-                    "xrays",
-                    xrays.join(", ")
-                );
-
-
-                formData.append(
-                    "notes",
-                    notes
-                );
-
-
-                await fetch(
-                    GOOGLE_SCRIPT_URL,
-                    {
-
-                        method:
-                            "POST",
-
-                        mode:
-                            "no-cors",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/x-www-form-urlencoded"
-
-                        },
-
-                        body:
-                            formData
-
-                    }
-                );
-
-
-                // ========================================
-                // Success
-                // ========================================
 
                 alert(
                     "✅ تم إضافة الحالة بنجاح"
                 );
 
 
-                addCaseModal.hide();
+                if (addCaseModal) {
+                    addCaseModal.hide();
+                }
 
 
                 resetAddCaseForm();
@@ -1096,7 +1009,7 @@ if (saveNewCaseBtn) {
             } catch (error) {
 
                 console.error(
-                    "Add case error:",
+                    "SAVE CASE ERROR:",
                     error
                 );
 
@@ -1106,12 +1019,12 @@ if (saveNewCaseBtn) {
                     error.message
                 );
 
-
             } finally {
 
                 saveNewCaseBtn.disabled =
                     false;
-[2026-09-20 8:03 PM] سلمان مصور: saveNewCaseBtn.textContent =
+
+                saveNewCaseBtn.textContent =
                     "حفظ الحالة";
 
             }
@@ -1122,9 +1035,9 @@ if (saveNewCaseBtn) {
 }
 
 
-// ========================================
-// Real-time Referrals Listener
-// ========================================
+// ======================================================
+// Load Referrals
+// ======================================================
 
 function loadReferrals() {
 
@@ -1134,30 +1047,47 @@ function loadReferrals() {
         );
 
 
-    table.innerHTML = "";
+    if (!table) {
+
+        console.error(
+            "referralTable not found"
+        );
+
+        return;
+
+    }
 
 
-    const q =
-        query(
-            collection(
-                db,
-                "referrals"
-            ),
-            orderBy(
-                "createdAt",
-                "desc"
-            )
+    console.log(
+        "Starting referrals listener..."
+    );
+
+
+    table.innerHTML =
+        `
+        <tr>
+            <td colspan="13" class="text-center">
+                جاري تحميل الإحالات...
+            </td>
+        </tr>
+        `;
+
+
+    const referralsCollection =
+        collection(
+            db,
+            "referrals"
         );
 
 
     onSnapshot(
 
-        q,
+        referralsCollection,
 
         snapshot => {
 
             console.log(
-                "Referrals:",
+                "Firebase referrals:",
                 snapshot.size
             );
 
@@ -1166,16 +1096,42 @@ function loadReferrals() {
 
 
             snapshot.forEach(
-                referral => {
+                referralDoc => {
+
+                    const data =
+                        referralDoc.data();
+
 
                     allReferrals.push({
 
                         docId:
-                            referral.id,
+                            referralDoc.id,
 
-                        ...referral.data()
+                        ...data
 
                     });
+
+                }
+            );
+
+
+            // Sort in JavaScript
+
+            allReferrals.sort(
+                (a, b) => {
+
+                    const dateA =
+                        getTimestampMillis(
+                            a.createdAt
+                        );
+
+                    const dateB =
+                        getTimestampMillis(
+                            b.createdAt
+                        );
+
+
+                    return dateB - dateA;
 
                 }
             );
@@ -1190,9 +1146,26 @@ function loadReferrals() {
         error => {
 
             console.error(
-                "Error listening to referrals:",
+                "FIREBASE REFERRALS ERROR:",
                 error
             );
+
+
+            table.innerHTML =
+                `
+                <tr>
+                    <td
+                        colspan="13"
+                        class="text-center text-danger"
+                    >
+                        ❌ خطأ في تحميل الإحالات
+                        <br>
+                        <small>
+                            ${escapeHtml(error.message)}
+                        </small>
+                    </td>
+                </tr>
+                `;
 
         }
 
@@ -1201,9 +1174,104 @@ function loadReferrals() {
 }
 
 
-// ========================================
+// ======================================================
+// Timestamp Helper
+// ======================================================
+
+function getTimestampMillis(timestamp) {
+
+    if (!timestamp) {
+        return 0;
+    }
+
+
+    try {
+
+        if (
+            typeof timestamp.toMillis ===
+            "function"
+        ) {
+
+            return timestamp.toMillis();
+
+        }
+
+
+        if (
+            typeof timestamp.toDate ===
+            "function"
+        ) {
+
+            return timestamp.toDate().getTime();
+
+        }
+
+
+        if (
+            timestamp instanceof Date
+        ) {
+
+            return timestamp.getTime();
+
+        }
+
+
+        if (
+            typeof timestamp ===
+            "number"
+        ) {
+
+            return timestamp;
+
+        }
+
+
+        if (
+            typeof timestamp ===
+            "string"
+        ) {
+
+            const parsed =
+                Date.parse(timestamp);
+
+
+            return isNaN(parsed)
+                ? 0
+                : parsed;
+
+        }
+
+    } catch (error) {
+
+        return 0;
+
+    }
+
+
+    return 0;
+
+}
+
+
+// ======================================================
+// Escape HTML
+// ======================================================
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+// ======================================================
 // Render Referrals
-// ========================================
+// ======================================================
 
 function renderReferrals(list) {
 
@@ -1213,151 +1281,145 @@ function renderReferrals(list) {
         );
 
 
+    if (!table) {
+        return;
+    }
+
+
     table.innerHTML = "";
+
+
+    if (list.length === 0) {
+
+        table.innerHTML =
+            `
+            <tr>
+                <td
+                    colspan="13"
+                    class="text-center text-muted"
+                >
+                    لا توجد إحالات
+                </td>
+            </tr>
+            `;
+
+        return;
+
+    }
 
 
     list.forEach(data => {
 
         const row =
-            document.createElement(
-                "tr"
-            );
+            document.createElement("tr");
 
 
-        // ========================================
+        row.style.cursor =
+            "pointer";
+
+
         // Doctor
-        // ========================================
 
         const tdDoctor =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
         tdDoctor.textContent =
             data.doctorName || "";
 
 
-        // ========================================
         // Clinic
-        // ========================================
 
         const tdClinic =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
         tdClinic.textContent =
             data.clinicName || "";
 
 
-        // ========================================
         // Patient
-        // ========================================
 
         const tdPatient =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
         tdPatient.textContent =
             data.patientName || "";
 
 
-        // ========================================
         // Age
-        // ========================================
 
         const tdAge =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
         tdAge.textContent =
-            data.age || "";
+            data.age ?? "";
 
 
-        // ========================================
         // Phone
-        // ========================================
 
         const tdPhone =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
         tdPhone.textContent =
             data.phone || "";
 
 
-        // ========================================
         // Gender
-        // ========================================
 
         const tdGender =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
         tdGender.textContent =
             data.gender || "";
 
 
-        // ========================================
-        // X-Rays
-        // ========================================
+        // X-rays
 
         const tdXrays =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
 
-        tdXrays.textContent =
-            Array.isArray(data.xrays)
+        if (Array.isArray(data.xrays)) {
 
-                ? data.xrays.join(", ")
+            tdXrays.textContent =
+                data.xrays.join(", ");
 
-                : data.xrays || "";
+        } else {
+
+            tdXrays.textContent =
+                data.xrays || "";
+
+        }
 
 
-        // ========================================
         // Notes
-        // ========================================
 
         const tdNotes =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
         tdNotes.textContent =
             data.notes || "";
-[2026-09-20 8:03 PM] سلمان مصور: // ========================================
+
+
         // Created Date
-        // ========================================
 
         const tdDate =
-            document.createElement(
-                "td"
+            document.createElement("td");
+
+
+        const createdMillis =
+            getTimestampMillis(
+                data.createdAt
             );
 
 
-        if (data.createdAt) {
+        if (createdMillis) {
 
-            try {
-
-                tdDate.textContent =
-                    data.createdAt
-                        .toDate()
-                        .toLocaleString(
-                            "ar-IQ"
-                        );
-
-            } catch (error) {
-
-                tdDate.textContent =
-                    "";
-
-            }
+            tdDate.textContent =
+                new Date(
+                    createdMillis
+                ).toLocaleString(
+                    "ar-IQ"
+                );
 
         } else {
 
@@ -1367,29 +1429,21 @@ function renderReferrals(list) {
         }
 
 
-        // ========================================
         // Date of CBCT
-        // ========================================
 
         const tdCBCTDate =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
 
         const cbctDateInput =
-            document.createElement(
-                "input"
-            );
+            document.createElement("input");
 
 
         cbctDateInput.type =
             "date";
 
-
         cbctDateInput.className =
             "form-control form-control-sm";
-
 
         cbctDateInput.value =
             data.dateOfCBCT || "";
@@ -1397,9 +1451,9 @@ function renderReferrals(list) {
 
         cbctDateInput.addEventListener(
             "click",
-            e => {
+            event => {
 
-                e.stopPropagation();
+                event.stopPropagation();
 
             }
         );
@@ -1407,15 +1461,14 @@ function renderReferrals(list) {
 
         cbctDateInput.addEventListener(
             "change",
-            async function (e) {
+            event => {
 
-                e.stopPropagation();
+                event.stopPropagation();
 
-
-                await updateReferralField(
+                updateReferralField(
                     data,
                     "dateOfCBCT",
-                    this.value
+                    event.target.value
                 );
 
             }
@@ -1427,37 +1480,27 @@ function renderReferrals(list) {
         );
 
 
-        // ========================================
-        // CBCT Price
-        // ========================================
+        // Price
 
         const tdPrice =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
 
         const priceInput =
-            document.createElement(
-                "input"
-            );
+            document.createElement("input");
 
 
         priceInput.type =
             "number";
 
-
         priceInput.min =
             "0";
-
 
         priceInput.className =
             "form-control form-control-sm";
 
-
         priceInput.placeholder =
             "Price";
-
 
         priceInput.value =
             data.cbctPrice ?? "";
@@ -1465,9 +1508,9 @@ function renderReferrals(list) {
 
         priceInput.addEventListener(
             "click",
-            e => {
+            event => {
 
-                e.stopPropagation();
+                event.stopPropagation();
 
             }
         );
@@ -1475,15 +1518,14 @@ function renderReferrals(list) {
 
         priceInput.addEventListener(
             "change",
-            async function (e) {
+            event => {
 
-                e.stopPropagation();
+                event.stopPropagation();
 
-
-                await updateReferralField(
+                updateReferralField(
                     data,
                     "cbctPrice",
-                    this.value
+                    event.target.value
                 );
 
             }
@@ -1495,14 +1537,10 @@ function renderReferrals(list) {
         );
 
 
-        // ========================================
         // Done
-        // ========================================
 
         const tdDone =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
 
         tdDone.className =
@@ -1510,22 +1548,17 @@ function renderReferrals(list) {
 
 
         const doneCheckbox =
-            document.createElement(
-                "input"
-            );
+            document.createElement("input");
 
 
         doneCheckbox.type =
             "checkbox";
 
-
         doneCheckbox.className =
             "form-check-input";
 
-
         doneCheckbox.style.transform =
             "scale(1.3)";
-
 
         doneCheckbox.checked =
             data.done === true;
@@ -1533,9 +1566,9 @@ function renderReferrals(list) {
 
         doneCheckbox.addEventListener(
             "click",
-            e => {
+            event => {
 
-                e.stopPropagation();
+                event.stopPropagation();
 
             }
         );
@@ -1543,15 +1576,14 @@ function renderReferrals(list) {
 
         doneCheckbox.addEventListener(
             "change",
-            async function (e) {
+            event => {
 
-                e.stopPropagation();
+                event.stopPropagation();
 
-
-                await updateReferralField(
+                updateReferralField(
                     data,
                     "done",
-                    this.checked
+                    event.target.checked
                 );
 
             }
@@ -1561,25 +1593,20 @@ function renderReferrals(list) {
         tdDone.appendChild(
             doneCheckbox
         );
-[2026-09-20 8:03 PM] سلمان مصور: // ========================================
+
+
         // Actions
-        // ========================================
 
         const tdAction =
-            document.createElement(
-                "td"
-            );
+            document.createElement("td");
 
 
         const deleteBtn =
-            document.createElement(
-                "button"
-            );
+            document.createElement("button");
 
 
         deleteBtn.className =
             "btn btn-danger btn-sm";
-
 
         deleteBtn.textContent =
             "Delete";
@@ -1587,26 +1614,23 @@ function renderReferrals(list) {
 
         deleteBtn.addEventListener(
             "click",
-            async e => {
+            async event => {
 
-                e.stopPropagation();
+                event.stopPropagation();
 
 
-                const ok =
+                const confirmed =
                     confirm(
-                        "هل أنت متأكد من حذف هذه الإحالة؟\n\n" +
-                        "سيتم حذفها من Firebase و Google Sheet."
+                        "هل أنت متأكد من حذف هذه الإحالة؟"
                     );
 
 
-                if (!ok) {
+                if (!confirmed) {
                     return;
                 }
 
 
                 try {
-
-                    // Firebase
 
                     await deleteDoc(
                         doc(
@@ -1617,89 +1641,21 @@ function renderReferrals(list) {
                     );
 
 
-                    // Google Sheet
-
-                    const formData =
-                        new URLSearchParams();
-
-
-                    formData.append(
-                        "action",
-                        "deleteReferral"
-                    );
-
-
-                    formData.append(
-                        "referralID",
-                        data.referralID || ""
-                    );
-
-
-                    const response =
-                        await fetch(
-                            GOOGLE_SCRIPT_URL,
-                            {
-
-                                method:
-                                    "POST",
-
-                                headers: {
-
-                                    "Content-Type":
-                                        "application/x-www-form-urlencoded"
-
-                                },
-
-                                body:
-                                    formData.toString()
-
-                            }
-                        );
-
-
-                    const result =
-                        await response.json();
-
-
-                    if (!result.success) {
-
-                        console.error(
-                            "Google Sheet delete failed:",
-                            result
-                        );
-
-
-                        alert(
-                            "⚠️ تم حذف الإحالة من Firebase، " +
-                            "لكن لم يتم حذفها من Google Sheet.\n\n" +
-                            "Referral ID: " +
-                            (
-                                data.referralID ||
-                                ""
-                            )
-                        );
-
-
-                        return;
-
-                    }
-
-
                     alert(
-                        "✅ تم حذف الإحالة بنجاح من Firebase و Google Sheet"
+                        "✅ تم حذف الإحالة من Firebase"
                     );
 
 
                 } catch (error) {
 
                     console.error(
-                        "Delete error:",
+                        "DELETE ERROR:",
                         error
                     );
 
 
                     alert(
-                        "❌ حدث خطأ أثناء حذف الإحالة:\n\n" +
+                        "❌ حدث خطأ أثناء الحذف:\n\n" +
                         error.message
                     );
 
@@ -1714,9 +1670,7 @@ function renderReferrals(list) {
         );
 
 
-        // ========================================
-        // Append Columns
-        // ========================================
+        // Append
 
         row.appendChild(tdDoctor);
         row.appendChild(tdClinic);
@@ -1731,13 +1685,9 @@ function renderReferrals(list) {
         row.appendChild(tdPrice);
         row.appendChild(tdDone);
         row.appendChild(tdAction);
-[2026-09-20 8:03 PM] سلمان مصور: // ========================================
-        // Row Click
-        // ========================================
 
-        row.style.cursor =
-            "pointer";
 
+        // Row click
 
         row.addEventListener(
             "click",
@@ -1764,7 +1714,7 @@ function renderReferrals(list) {
                 document.getElementById(
                     "viewAge"
                 ).textContent =
-                    data.age || "";
+                    data.age ?? "";
 
 
                 document.getElementById(
@@ -1782,13 +1732,8 @@ function renderReferrals(list) {
                 document.getElementById(
                     "viewXrays"
                 ).textContent =
-
-                    Array.isArray(
-                        data.xrays
-                    )
-
+                    Array.isArray(data.xrays)
                         ? data.xrays.join(", ")
-
                         : data.xrays || "";
 
 
@@ -1798,39 +1743,42 @@ function renderReferrals(list) {
                     data.notes || "";
 
 
+                const millis =
+                    getTimestampMillis(
+                        data.createdAt
+                    );
+
+
                 document.getElementById(
                     "viewDate"
                 ).textContent =
-
-                    data.createdAt
-
-                        ? data.createdAt
-                            .toDate()
-                            .toLocaleString(
-                                "ar-IQ"
-                            )
-
+                    millis
+                        ? new Date(
+                            millis
+                        ).toLocaleString(
+                            "ar-IQ"
+                        )
                         : "";
 
 
-                referralModal.show();
+                if (referralModal) {
+                    referralModal.show();
+                }
 
             }
         );
 
 
-        table.appendChild(
-            row
-        );
+        table.appendChild(row);
 
     });
 
 }
 
 
-// ========================================
-// Update Firebase + Google Sheet
-// ========================================
+// ======================================================
+// Update Referral
+// ======================================================
 
 async function updateReferralField(
     data,
@@ -1839,8 +1787,6 @@ async function updateReferralField(
 ) {
 
     try {
-
-        // Firebase
 
         await updateDoc(
             doc(
@@ -1858,72 +1804,6 @@ async function updateReferralField(
             value;
 
 
-        // Google Sheet
-
-        if (data.referralID) {
-
-            const formData =
-                new URLSearchParams();
-
-
-            formData.append(
-                "action",
-                "updateReferral"
-            );
-
-
-            formData.append(
-                "referralID",
-                data.referralID
-            );
-
-
-            formData.append(
-                "dateOfCBCT",
-                data.dateOfCBCT || ""
-            );
-
-
-            formData.append(
-                "cbctPrice",
-                data.cbctPrice ?? ""
-            );
-
-
-            formData.append(
-                "done",
-                data.done === true
-                    ? "TRUE"
-                    : "FALSE"
-            );
-
-
-            await fetch(
-                GOOGLE_SCRIPT_URL,
-                {
-
-                    method:
-                        "POST",
-
-                    mode:
-                        "no-cors",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/x-www-form-urlencoded"
-
-                    },
-
-                    body:
-                        formData
-
-                }
-            );
-
-        }
-
-
         console.log(
             "Updated:",
             field,
@@ -1931,81 +1811,158 @@ async function updateReferralField(
         );
 
 
+        if (!data.referralID) {
+            return;
+        }
+
+
+        const formData =
+            new URLSearchParams();
+
+
+        formData.append(
+            "action",
+            "updateReferral"
+        );
+
+
+        formData.append(
+            "referralID",
+            data.referralID
+        );
+
+
+        formData.append(
+            "dateOfCBCT",
+            data.dateOfCBCT || ""
+        );
+
+
+        formData.append(
+            "cbctPrice",
+            data.cbctPrice ?? ""
+        );
+
+
+        formData.append(
+            "done",
+            data.done === true
+                ? "TRUE"
+                : "FALSE"
+        );
+
+
+        try {
+
+            await fetch(
+                GOOGLE_SCRIPT_URL,
+                {
+
+                    method: "POST",
+
+                    mode: "no-cors",
+
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded"
+                    },
+
+                    body:
+                        formData.toString()
+
+                }
+            );
+
+        } catch (sheetError) {
+
+            console.error(
+                "Google Sheet update error:",
+                sheetError
+            );
+
+        }
+
     } catch (error) {
 
         console.error(
-            "Update referral error:",
+            "UPDATE ERROR:",
             error
         );
 
 
         alert(
-            "حدث خطأ أثناء حفظ التعديل"
+            "❌ حدث خطأ أثناء حفظ التعديل:\n\n" +
+            error.message
         );
 
     }
 
 }
-[2026-09-20 8:03 PM] سلمان مصور: // ========================================
-// Search
-// ========================================
 
-document
-    .getElementById(
+
+// ======================================================
+// Search
+// ======================================================
+
+const searchReferral =
+    document.getElementById(
         "searchReferral"
-    )
-    .addEventListener(
+    );
+
+
+if (searchReferral) {
+
+    searchReferral.addEventListener(
         "input",
         function () {
 
             const search =
                 this.value
+                    .trim()
                     .toLowerCase();
+
+
+            if (!search) {
+
+                renderReferrals(
+                    allReferrals
+                );
+
+                return;
+
+            }
 
 
             const filtered =
                 allReferrals.filter(
                     data => {
 
+                        const doctor =
+                            String(
+                                data.doctorName || ""
+                            ).toLowerCase();
+
+                        const clinic =
+                            String(
+                                data.clinicName || ""
+                            ).toLowerCase();
+
+                        const patient =
+                            String(
+                                data.patientName || ""
+                            ).toLowerCase();
+
+                        const phone =
+                            String(
+                                data.phone || ""
+                            ).toLowerCase();
+
+
                         return (
-
-                            (
-                                data.doctorName ||
-                                ""
-                            )
-                                .toLowerCase()
-                                .includes(search)
-
-
-                            ||
-
-                            (
-                                data.clinicName ||
-                                ""
-                            )
-                                .toLowerCase()
-                                .includes(search)
-
-
-                            ||
-
-                            (
-                                data.patientName ||
-                                ""
-                            )
-                                .toLowerCase()
-                                .includes(search)
-
-
-                            ||
-
-                            (
-                                data.phone ||
-                                ""
-                            )
-                                .toLowerCase()
-                                .includes(search)
-
+                            doctor.includes(search) ||
+                            clinic.includes(search) ||
+                            patient.includes(search) ||
+                            phone.includes(search)
                         );
 
                     }
@@ -2019,10 +1976,12 @@ document
         }
     );
 
+}
 
-// ========================================
+
+// ======================================================
 // Initialize
-// ========================================
+// ======================================================
 
 createAddToothOptions();
 
@@ -2031,3 +1990,5 @@ updateAddSelectedTeeth();
 loadDoctors();
 
 loadReferrals();
+  
+No file chosen
