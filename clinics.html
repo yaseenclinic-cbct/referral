@@ -10,57 +10,157 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
 
+<style>
+
+body {
+    background: #f8f9fa;
+}
+
+/* =========================
+   Romexis status
+========================= */
+
+.romexis-date-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.romexis-date-wrapper input {
+    min-width: 155px;
+}
+
+.romexis-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-active .status-dot {
+    background: #198754;
+}
+
+.status-warning .status-dot {
+    background: #dc3545;
+}
+
+.status-inactive .status-dot {
+    background: #6c757d;
+}
+
+.warning-icon {
+    color: #dc3545;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 768px) {
+
+    table {
+        font-size: 13px;
+    }
+
+    .romexis-date-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
 <div class="container py-4">
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-<div class="mb-3">
- <h2 class="m-0">
-        قائمة العيادات
-    </h2>
-    <input
-        type="text"
-        id="searchClinic"
-        class="form-control"
-        placeholder="🔍 ابحث باسم العيادة أو الكود">
+    <!-- =========================
+         Header
+    ========================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div class="mb-3">
+
+            <h2 class="m-0">
+                قائمة العيادات
+            </h2>
+
+            <input
+                type="text"
+                id="searchClinic"
+                class="form-control mt-2"
+                placeholder="🔍 ابحث باسم العيادة أو الكود">
+
+        </div>
+
+        <button
+            class="btn btn-success"
+            id="addClinicBtn">
+
+            ➕ إضافة عيادة
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         Clinics Table
+    ========================= -->
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Clinic Code</th>
+
+                    <th>Clinic Name</th>
+
+                    <th>تفعيل Romexis</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="clinicTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
-   
 
-    <button
-        class="btn btn-success"
-        id="addClinicBtn">
 
-        ➕ إضافة عيادة
 
-    </button>
+<!-- ==========================================
+     Add / Edit Clinic Modal
+========================================== -->
 
-</div>
-
-<table class="table table-bordered table-hover">
-
-<thead>
-
-<tr>
-
-<th>Clinic Code</th>
-<th>Clinic Name</th>
-<th>Actions</th>
-
-</tr>
-
-</thead>
-
-<tbody id="clinicTable">
-
-</tbody>
-
-</table>
-
-</div>
 <div class="modal fade" id="clinicModal" tabindex="-1">
 
     <div class="modal-dialog">
@@ -69,8 +169,10 @@
 
             <div class="modal-header">
 
-                <h5 class="modal-title">
+                <h5 class="modal-title" id="clinicModalTitle">
+
                     إضافة عيادة
+
                 </h5>
 
                 <button
@@ -79,6 +181,7 @@
                 </button>
 
             </div>
+
 
             <div class="modal-body">
 
@@ -94,6 +197,7 @@
 
                 </div>
 
+
                 <div class="mb-3">
 
                     <label class="form-label">
@@ -106,9 +210,40 @@
 
                 </div>
 
+
+                <!-- =========================
+                     Romexis Date
+                ========================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        تاريخ تفعيل Romexis
+                    </label>
+
+                    <input
+                        type="date"
+                        id="romexisDateInput"
+                        class="form-control">
+
+                    <div class="form-text">
+                        يبدأ التنبيه بعد مرور 50 يوم من هذا التاريخ.
+                    </div>
+
+                </div>
+
             </div>
 
+
             <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    إلغاء
+
+                </button>
 
                 <button
                     class="btn btn-success"
@@ -126,7 +261,10 @@
 
 </div>
 
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script type="module" src="js/clinics.js"></script>
 
 </body>
