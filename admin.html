@@ -28,10 +28,6 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* =========================
-           Login
-        ========================= */
-
         #loginScreen {
 
             min-height: 100vh;
@@ -74,19 +70,65 @@
         }
 
         #loginError {
-
             display: none;
+        }
+
+        #adminContent {
+            display: none;
+        }
+
+
+        /* =========================
+           Clinic Alert
+        ========================= */
+
+        .nav-alert-dot {
+
+            display: inline-block;
+
+            width: 12px;
+
+            height: 12px;
+
+            background: #dc3545;
+
+            border-radius: 50%;
+
+            margin-right: 8px;
+
+            vertical-align: middle;
+
+            box-shadow:
+                0 0 0 3px rgba(220,53,69,0.15);
+
+            animation:
+                alertPulse 1.5s infinite;
 
         }
 
-        /* =========================
-           Admin
-        ========================= */
 
-        #adminContent {
+        @keyframes alertPulse {
 
+            0% {
+                box-shadow:
+                    0 0 0 0 rgba(220,53,69,0.45);
+            }
+
+            70% {
+                box-shadow:
+                    0 0 0 7px rgba(220,53,69,0);
+            }
+
+            100% {
+                box-shadow:
+                    0 0 0 0 rgba(220,53,69,0);
+            }
+
+        }
+
+
+        .clinic-alert-hidden {
             display: none;
-
         }
 
     </style>
@@ -98,7 +140,7 @@
 
 
 <!-- ==========================================
-     LOGIN SCREEN
+     LOGIN
 ========================================== -->
 
 <div id="loginScreen">
@@ -174,7 +216,7 @@
 
 
 <!-- ==========================================
-     ADMIN CONTENT
+     ADMIN
 ========================================== -->
 
 <div
@@ -200,118 +242,128 @@
     </div>
 
 
-<!-- =========================
-     Dashboard Cards
-========================= -->
 
-<div class="row g-3">
+    <!-- =========================
+         Dashboard Cards
+    ========================= -->
 
-    <!-- Doctors -->
+    <div class="row g-3">
 
-    <div class="col-md-3">
 
-        <div class="card dashboard-card">
+        <!-- Doctors -->
 
-            <h3 id="doctorCount">
-                0
-            </h3>
+        <div class="col-md-3">
 
-            <p>
-                عدد الأطباء
-            </p>
+            <div class="card dashboard-card">
+
+                <h3 id="doctorCount">
+                    0
+                </h3>
+
+                <p>
+                    عدد الأطباء
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Clinics -->
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card">
+
+                <h3 id="clinicCount">
+                    0
+                </h3>
+
+                <p>
+                    عدد العيادات
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Referrals -->
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card">
+
+                <h3 id="referralCount">
+                    0
+                </h3>
+
+                <p>
+                    الإحالات
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Monthly -->
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card">
+
+                <h3 id="monthlyReferralCount">
+                    0
+                </h3>
+
+                <p>
+                    إحالات هذا الشهر
+                </p>
+
+            </div>
 
         </div>
 
     </div>
 
 
-    <!-- Clinics -->
 
-    <div class="col-md-3">
+    <!-- =========================
+         Month Selector
+    ========================= -->
 
-        <div class="card dashboard-card">
+    <div class="row mt-4">
 
-            <h3 id="clinicCount">
-                0
-            </h3>
+        <div class="col-md-4">
 
-            <p>
-                عدد العيادات
-            </p>
+            <label
+                for="monthSelector"
+                class="form-label">
 
-        </div>
+                اختر الشهر
 
-    </div>
+            </label>
 
+            <select
+                id="monthSelector"
+                class="form-select">
 
-    <!-- Total Referrals -->
-
-    <div class="col-md-3">
-
-        <div class="card dashboard-card">
-
-            <h3 id="referralCount">
-                0
-            </h3>
-
-            <p>
-                الإحالات
-            </p>
+            </select>
 
         </div>
 
     </div>
 
 
-    <!-- Monthly Referrals -->
 
-    <div class="col-md-3">
-
-        <div class="card dashboard-card">
-
-            <h3 id="monthlyReferralCount">
-                0
-            </h3>
-
-            <p>
-                إحالات هذا الشهر
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
+    <hr class="my-5">
 
 
-<!-- =========================
-     Month Selector
-========================= -->
 
-<div class="row mt-4">
-
-    <div class="col-md-4">
-
-        <label
-            for="monthSelector"
-            class="form-label">
-
-            اختر الشهر
-
-        </label>
-
-        <select
-            id="monthSelector"
-            class="form-select">
-
-        </select>
-
-    </div>
-
-</div>
-
-
-<hr class="my-5">
     <!-- =========================
          Navigation
     ========================= -->
@@ -331,9 +383,16 @@
 
         <a
             href="clinics.html"
+            id="clinicsNavBtn"
             class="btn btn-warning btn-lg">
 
             🏥 العيادات
+
+            <span
+                id="clinicAlertDot"
+                class="nav-alert-dot clinic-alert-hidden"
+                title="هناك عيادة تحتاج إلى تنبيه Romexis">
+            </span>
 
         </a>
 
@@ -356,27 +415,34 @@
 
 
 <script>
-   const LOGIN_API =
+
+const LOGIN_API =
     "https://script.google.com/macros/s/AKfycbwl_YFz58K6Cu1238_fbS4UoQkp5JIhpq9x7lLhWw0jdibnjf-obpgb-V9MPtuK7fg/exec";
 
 
 const loginScreen =
     document.getElementById("loginScreen");
 
+
 const adminContent =
     document.getElementById("adminContent");
+
 
 const loginBtn =
     document.getElementById("loginBtn");
 
+
 const logoutBtn =
     document.getElementById("logoutBtn");
+
 
 const usernameInput =
     document.getElementById("adminUsername");
 
+
 const passwordInput =
     document.getElementById("adminPassword");
+
 
 const loginError =
     document.getElementById("loginError");
@@ -519,7 +585,7 @@ loginBtn.addEventListener(
 
 
 // ==========================================
-// ENTER KEY
+// ENTER
 // ==========================================
 
 passwordInput.addEventListener(
@@ -555,7 +621,7 @@ logoutBtn.addEventListener(
 
 
 // ==========================================
-// CHECK SESSION
+// SESSION
 // ==========================================
 
 if (
@@ -571,7 +637,9 @@ if (
     showLogin();
 
 }
+
 </script>
+
 
 
 <script
