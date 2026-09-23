@@ -10,6 +10,204 @@ console.log("admin.js loaded");
 
 
 // ==========================================
+// Constants
+// ==========================================
+
+const ROMEXIS_WARNING_DAYS = 50;
+
+
+// ==========================================
+// Firebase Date Converter
+// ==========================================
+
+function convertFirebaseDate(value) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    // Firebase Timestamp
+
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
+
+        return value.toDate();
+
+    }
+
+
+    // JavaScript Date
+
+    if (
+        value instanceof Date
+    ) {
+
+        return value;
+
+    }
+
+
+    // String
+
+    const date =
+        new Date(value);
+
+
+    if (
+        !isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return date;
+
+    }
+
+
+    return null;
+
+}
+
+
+// ==========================================
+// Check Romexis Warning
+// ==========================================
+
+function clinicNeedsRomexisWarning(clinic) {
+
+    if (
+        !clinic.romexisActivatedAt
+    ) {
+
+        return false;
+
+    }
+
+
+    const activationDate =
+        convertFirebaseDate(
+            clinic.romexisActivatedAt
+        );
+
+
+    if (!activationDate) {
+
+        return false;
+
+    }
+
+
+    const today =
+        new Date();
+
+
+    const todayOnly =
+        new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        );
+
+
+    const activationOnly =
+        new Date(
+            activationDate.getFullYear(),
+            activationDate.getMonth(),
+            activationDate.getDate()
+        );
+
+
+    const difference =
+        todayOnly.getTime() -
+        activationOnly.getTime();
+
+
+    const days =
+        Math.floor(
+            difference /
+            (1000 * 60 * 60 * 24)
+        );
+
+
+    return (
+        days >= ROMEXIS_WARNING_DAYS
+    );
+
+}
+
+
+// ==========================================
+// Update Clinic Alert
+// ==========================================
+
+function updateClinicAlert(clinicsSnapshot) {
+
+    const alertDot =
+        document.getElementById(
+            "clinicAlertDot"
+        );
+
+
+    if (!alertDot) {
+
+        return;
+
+    }
+
+
+    let warningExists = false;
+
+
+    clinicsSnapshot.forEach(
+        (clinicDocument) => {
+
+            const clinic =
+                clinicDocument.data();
+
+
+            if (
+                clinicNeedsRomexisWarning(
+                    clinic
+                )
+            ) {
+
+                warningExists = true;
+
+            }
+
+        }
+    );
+
+
+    if (warningExists) {
+
+        alertDot.classList.remove(
+            "clinic-alert-hidden"
+        );
+
+    } else {
+
+        alertDot.classList.add(
+            "clinic-alert-hidden"
+        );
+
+    }
+
+
+    console.log(
+        "Romexis clinic warning:",
+        warningExists
+    );
+
+}
+
+
+// ==========================================
 // Dashboard
 // ==========================================
 
@@ -57,7 +255,16 @@ async function loadDashboard() {
 
 
         // ==========================
-        // Update basic counts
+        // Clinic Romexis Alert
+        // ==========================
+
+        updateClinicAlert(
+            clinicsSnapshot
+        );
+
+
+        // ==========================
+        // Basic Counts
         // ==========================
 
         const doctorCount =
@@ -65,10 +272,12 @@ async function loadDashboard() {
                 "doctorCount"
             );
 
+
         const clinicCount =
             document.getElementById(
                 "clinicCount"
             );
+
 
         const referralCount =
             document.getElementById(
@@ -101,7 +310,7 @@ async function loadDashboard() {
 
 
         // ==========================
-        // Convert referrals to array
+        // Referrals Array
         // ==========================
 
         const referrals = [];
@@ -124,7 +333,7 @@ async function loadDashboard() {
 
 
         // ==========================
-        // Setup month selector
+        // Month Selector
         // ==========================
 
         setupMonthSelector(
@@ -135,6 +344,7 @@ async function loadDashboard() {
         console.log(
             "Dashboard loaded:",
             {
+
                 doctors:
                     doctorsSnapshot.size,
 
@@ -143,6 +353,7 @@ async function loadDashboard() {
 
                 referrals:
                     referralsSnapshot.size
+
             }
         );
 
@@ -163,7 +374,9 @@ async function loadDashboard() {
 // Month Selector
 // ==========================================
 
-function setupMonthSelector(referrals) {
+function setupMonthSelector(
+    referrals
+) {
 
     const selector =
         document.getElementById(
@@ -190,8 +403,6 @@ function setupMonthSelector(referrals) {
 
     selector.innerHTML = "";
 
-
-    // الأشهر الموجودة فعليًا بالإحالات
 
     const months =
         new Set();
@@ -224,6 +435,8 @@ function setupMonthSelector(referrals) {
                     2,
                     "0"
                 );
+
+
             months.add(
                 `${year}-${month}`
             );
@@ -270,8 +483,7 @@ function setupMonthSelector(referrals) {
 
 
     // ==========================
-    // Sort months
-    // newest → oldest
+    // Sort
     // ==========================
 
     const sortedMonths =
@@ -281,7 +493,7 @@ function setupMonthSelector(referrals) {
 
 
     // ==========================
-    // Create options
+    // Options
     // ==========================
 
     sortedMonths.forEach(
@@ -316,11 +528,13 @@ function setupMonthSelector(referrals) {
                 date.toLocaleString(
                     "ar-IQ",
                     {
+
                         month:
                             "long",
 
                         year:
                             "numeric"
+
                     }
                 );
 
@@ -334,7 +548,7 @@ function setupMonthSelector(referrals) {
 
 
     // ==========================
-    // Select current month
+    // Current Month
     // ==========================
 
     const now =
@@ -368,7 +582,7 @@ function setupMonthSelector(referrals) {
 
 
     // ==========================
-    // Initial count
+    // Initial Count
     // ==========================
 
     updateMonthlyReferralCount(
@@ -378,7 +592,7 @@ function setupMonthSelector(referrals) {
 
 
     // ==========================
-    // Change month
+    // Change
     // ==========================
 
     selector.addEventListener(
@@ -397,7 +611,7 @@ function setupMonthSelector(referrals) {
 
 
 // ==========================================
-// Update Monthly Referral Count
+// Monthly Count
 // ==========================================
 
 function updateMonthlyReferralCount(
@@ -467,6 +681,8 @@ function updateMonthlyReferralCount(
             count;
 
     }
+
+
     console.log(
         "Selected month:",
         selectedMonth,
@@ -478,65 +694,7 @@ function updateMonthlyReferralCount(
 
 
 // ==========================================
-// Firebase Date Converter
-// ==========================================
-
-function convertFirebaseDate(value) {
-
-    if (!value) {
-
-        return null;
-
-    }
-
-
-    // Firebase Timestamp
-
-    if (
-        typeof value.toDate ===
-        "function"
-    ) {
-
-        return value.toDate();
-
-    }
-
-
-    // JavaScript Date
-
-    if (
-        value instanceof Date
-    ) {
-
-        return value;
-
-    }
-
-
-    // String date
-
-    const date =
-        new Date(value);
-
-
-    if (
-        !isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return date;
-
-    }
-
-
-    return null;
-
-}
-
-
-// ==========================================
-// Start Dashboard
+// Start
 // ==========================================
 
 loadDashboard();
